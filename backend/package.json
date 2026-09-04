@@ -1,0 +1,20 @@
+{
+  "name": "@fse/backend",
+  "version": "0.0.1",
+  "private": true,
+  "description": "FSE backend — NestJS API server, event indexer, urgency-cache job, IPFS integration",
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@fse/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.0.0",
+    "typescript": "^5.4.0",
+    "jest": "^29.0.0"
+  }
+}

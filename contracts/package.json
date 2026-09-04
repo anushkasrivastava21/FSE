@@ -1,0 +1,25 @@
+{
+  "name": "@fse/contracts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "FSE smart contracts — Listing.sol, MatchingEngine.sol (Person A), Order.sol, Settlement.sol, FoodCreditToken.sol (Person B), ForecastRegistry.sol (Person C)",
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "hardhat test",
+    "lint": "solhint 'src/**/*.sol'",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy:amoy": "hardhat run scripts/deploy.ts --network amoy",
+    "typechain": "hardhat typechain"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "hardhat": "^2.22.0",
+    "solhint": "^5.0.0",
+    "typechain": "^8.3.0",
+    "@typechain/hardhat": "^9.1.0",
+    "@typechain/ethers-v6": "^0.5.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.4.0"
+  }
+}

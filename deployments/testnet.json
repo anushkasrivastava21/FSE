@@ -1,0 +1,18 @@
+{
+  "localhost": {
+    "Listing": "",
+    "MatchingEngine": "",
+    "Order": "",
+    "Settlement": "",
+    "FoodCreditToken": "",
+    "ForecastRegistry": ""
+  },
+  "amoy": {
+    "Listing": "",
+    "MatchingEngine": "",
+    "Order": "",
+    "Settlement": "",
+    "FoodCreditToken": "",
+    "ForecastRegistry": ""
+  }
+}

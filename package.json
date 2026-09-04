@@ -1,0 +1,30 @@
+{
+  "name": "fse-monorepo",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Blockchain Food Surplus Exchange — monorepo root",
+  "packageManager": "pnpm@9.0.0",
+  "workspaces": [
+    "contracts",
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,sol,md}\""
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "prettier": "^3.3.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,json,md}": ["prettier --write"],
+    "*.sol": ["solhint --fix"]
+  }
+}

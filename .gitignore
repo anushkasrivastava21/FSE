@@ -1,0 +1,36 @@
+# ── Node ──────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ── Build outputs ─────────────────────────────────────────
+dist/
+build/
+.next/
+out/
+
+# ── Hardhat / Foundry ─────────────────────────────────────
+artifacts/
+cache/
+typechain-types/
+deployments/localhost/
+
+# ── Environment variables (NEVER commit real secrets) ─────
+.env
+.env.local
+.env.*.local
+
+# ── Editors ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+
+# ── OS ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Turbo ─────────────────────────────────────────────────
+.turbo/
+
+# ── Test coverage ─────────────────────────────────────────
+coverage/
+lcov.info

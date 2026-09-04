@@ -1,0 +1,17 @@
+{
+  "name": "@fse/shared",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared types, ABIs, Zod schemas — auto-generated from contracts and OpenAPI specs. Never hand-write types here.",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  }
+}
