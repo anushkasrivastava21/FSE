@@ -33,4 +33,5 @@ Thumbs.db
 
 # ── Test coverage ─────────────────────────────────────────
 coverage/
+coverage.json
 lcov.info
