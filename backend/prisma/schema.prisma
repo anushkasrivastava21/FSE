@@ -1,0 +1,51 @@
+// Prisma schema for FSE Backend — Person A tables
+// listings_cache and matches_cache are owned by Person A's vertical.
+// Person B's tables (handoffs, orders_cache) will be added separately.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+/// Cached/indexed copy of on-chain Listing data.
+/// Populated by the event indexer listening to ListingCreated/Cancelled/StatusUpdated.
+model ListingsCache {
+  listingId    String   @id @map("listing_id")
+  donor        String
+  foodType     Int      @map("food_type")
+  quantity     Int
+  expiryTs     BigInt   @map("expiry_ts")
+  qualityTier  Int      @map("quality_tier")
+  locationHash String   @map("location_hash")
+  metadataUri  String   @map("metadata_uri")
+  chainStatus  String   @default("Open") @map("chain_status") // Open|Matched|Settled|Expired|Cancelled
+  cachedUrgency BigInt  @default(0) @map("cached_urgency")
+  createdAt    BigInt   @map("created_at")  // on-chain block.timestamp
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Indexes for common queries
+  @@index([chainStatus])
+  @@index([donor])
+  @@index([locationHash])
+  @@map("listings_cache")
+}
+
+/// Cached/indexed copy of on-chain Match data.
+/// Populated by the event indexer listening to MatchExecuted.
+model MatchesCache {
+  matchId         String   @id @map("match_id")
+  listingId       String   @map("listing_id")
+  orderId         String   @map("order_id")
+  urgencyAtMatch  BigInt   @map("urgency_at_match")
+  txHash          String   @default("") @map("tx_hash")
+  matchedAt       BigInt   @map("matched_at")  // on-chain block.timestamp
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([listingId])
+  @@index([orderId])
+  @@map("matches_cache")
+}
