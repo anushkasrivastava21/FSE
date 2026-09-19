@@ -35,3 +35,10 @@ Thumbs.db
 coverage/
 coverage.json
 lcov.info
+
+# ── Local development data ───────────────────────────────
+*.db
+*.db.backup
+
+# ── TypeScript build cache ────────────────────────────────
+*.tsbuildinfo

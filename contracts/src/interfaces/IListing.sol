@@ -28,4 +28,7 @@ interface IListing {
     /// @param listingId The on-chain listing ID (uint256).
     /// @return Full ListingData struct.
     function getListing(uint256 listingId) external view returns (ListingData memory);
+
+    /// @notice Updates the listing status to Matched or Settled.
+    function updateStatus(uint256 listingId, Status newStatus) external;
 }
