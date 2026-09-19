@@ -24,7 +24,16 @@ contract MockListing is IListing {
         });
     }
 
-    function getListing(uint256 listingId) external view returns (ListingData memory) {
+    function getListing(
+        uint256 listingId
+    ) external view returns (ListingData memory) {
         return _listings[listingId];
+    }
+
+    function updateStatus(
+        uint256 listingId,
+        Status newStatus
+    ) external {
+        _listings[listingId].status = newStatus;
     }
 }
