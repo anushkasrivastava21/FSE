@@ -96,7 +96,7 @@ export class ListingService {
     return {
       to: this.contracts.listingAddress,
       data: calldata,
-      chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "80002", 10),
+      chainId: parseInt(process.env.CHAIN_ID || "80002", 10),
     };
   }
 

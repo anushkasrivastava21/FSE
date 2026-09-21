@@ -26,8 +26,8 @@ For this MVP phase, we implemented a greedy matching algorithm on-chain.
 3. If found, mark both as `Matched` and emit the `MatchExecuted` event.
 
 **Complexity Analysis:**
-- The time complexity of the matching algorithm is `O(N × M)`, where `N` is the number of open listings and `M` is the number of open orders. 
-- While `O(N × M)` is acceptable for an MVP, running this sort-and-match loop strictly on-chain at scale would incur massive gas costs. 
+- The time complexity of the matching algorithm is `O(N × M)`, where `N` is the number of open listings and `M` is the number of open orders.
+- While `O(N × M)` is acceptable for an MVP, running this sort-and-match loop strictly on-chain at scale would incur massive gas costs.
 - **Future Improvement (Bipartite Matching):** We can move the heavy computation (Hungarian algorithm, `O(N^3)`) off-chain and only submit the verified matches to the chain (e.g., via a ZK-proof or a validator commit-reveal scheme).
 
 ## 3. Security Decisions & Trade-offs

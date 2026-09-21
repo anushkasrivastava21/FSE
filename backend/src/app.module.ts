@@ -1,34 +1,42 @@
 import { Module, OnModuleInit, Logger } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
+
+import { CoreModule } from "./core.module";
+
 import { ListingModule } from "./listing/listing.module";
 import { MatchingModule } from "./matching/matching.module";
 import { IpfsModule } from "./ipfs/ipfs.module";
-import { PrismaService } from "./prisma/prisma.service";
-import { ContractsConfigService } from "./config/contracts.config";
+import { OrderModule } from "./order/order.module";
+import { HandoffModule } from "./handoff/handoff.module";
+import { TokenModule } from "./token/token.module";
 
 @Module({
   imports: [
-    // Load .env from repo root
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: "../.env",
+      envFilePath: "./.env",
     }),
-
-    // ScheduleModule for urgency-cache repeatable job
     ScheduleModule.forRoot(),
+
+    CoreModule,
 
     ListingModule,
     MatchingModule,
     IpfsModule,
+    OrderModule,
+    HandoffModule,
+    TokenModule,
   ],
-  providers: [PrismaService, ContractsConfigService],
-  exports: [PrismaService, ContractsConfigService],
+  providers: [],
+  exports: [],
 })
 export class AppModule implements OnModuleInit {
   private readonly logger = new Logger(AppModule.name);
 
   onModuleInit() {
-    this.logger.log("FSE Backend initialized — Person A vertical (Listing & Matching)");
+    this.logger.log(
+      "FSE Backend initialized — Listings, Matching & NGO Orders",
+    );
   }
 }

@@ -16,7 +16,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 
 for (const name of CONTRACTS_TO_EXPORT) {
   const artifactPath = path.join(ARTIFACTS_DIR, `${name}.sol`, `${name}.json`);
-  
+
   if (!fs.existsSync(artifactPath)) {
     console.error(`Artifact not found: ${artifactPath}`);
     console.error("Run 'hardhat compile' first.");

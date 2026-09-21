@@ -1,6 +1,6 @@
-// Prisma schema for FSE Backend — Person A tables
-// listings_cache and matches_cache are owned by Person A's vertical.
-// Person B's tables (handoffs, orders_cache) will be added separately.
+// Prisma schema for FSE Backend
+// Person A: listings_cache and matches_cache
+// Person B: orders_cache, handoffs_cache, food_credit_tokens
 
 generator client {
   provider = "prisma-client-js"
@@ -14,20 +14,19 @@ datasource db {
 /// Cached/indexed copy of on-chain Listing data.
 /// Populated by the event indexer listening to ListingCreated/Cancelled/StatusUpdated.
 model ListingsCache {
-  listingId    String   @id @map("listing_id")
-  donor        String
-  foodType     Int      @map("food_type")
-  quantity     Int
-  expiryTs     BigInt   @map("expiry_ts")
-  qualityTier  Int      @map("quality_tier")
-  locationHash String   @map("location_hash")
-  metadataUri  String   @map("metadata_uri")
-  chainStatus  String   @default("Open") @map("chain_status") // Open|Matched|Settled|Expired|Cancelled
-  cachedUrgency BigInt  @default(0) @map("cached_urgency")
-  createdAt    BigInt   @map("created_at")  // on-chain block.timestamp
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+  listingId     String   @id @map("listing_id")
+  donor         String
+  foodType      Int      @map("food_type")
+  quantity      Int
+  expiryTs      BigInt   @map("expiry_ts")
+  qualityTier   Int      @map("quality_tier")
+  locationHash  String   @map("location_hash")
+  metadataUri   String   @map("metadata_uri")
+  chainStatus   String   @default("Open") @map("chain_status")
+  cachedUrgency BigInt   @default(0) @map("cached_urgency")
+  createdAt     BigInt   @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
 
-  // Indexes for common queries
   @@index([chainStatus])
   @@index([donor])
   @@index([locationHash])
@@ -37,15 +36,65 @@ model ListingsCache {
 /// Cached/indexed copy of on-chain Match data.
 /// Populated by the event indexer listening to MatchExecuted.
 model MatchesCache {
-  matchId         String   @id @map("match_id")
-  listingId       String   @map("listing_id")
-  orderId         String   @map("order_id")
-  urgencyAtMatch  BigInt   @map("urgency_at_match")
-  txHash          String   @default("") @map("tx_hash")
-  matchedAt       BigInt   @map("matched_at")  // on-chain block.timestamp
-  createdAt       DateTime @default(now()) @map("created_at")
+  matchId        String   @id @map("match_id")
+  listingId      String   @map("listing_id")
+  orderId        String   @map("order_id")
+  urgencyAtMatch BigInt   @map("urgency_at_match")
+  txHash         String   @default("") @map("tx_hash")
+  matchedAt      BigInt   @map("matched_at")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   @@index([listingId])
   @@index([orderId])
   @@map("matches_cache")
+}
+
+/// Cached/indexed copy of on-chain Order data.
+/// Populated by the Person B order indexer.
+model OrdersCache {
+  orderId      String   @id @map("order_id")
+  ngoAddress   String   @map("ngo_address")
+  quantity     Int
+  urgencyFlag  Boolean  @map("urgency_flag")
+  locationHash String   @map("location_hash")
+  chainStatus  String   @default("Open") @map("chain_status")
+  txHash       String   @default("") @map("tx_hash")
+  createdAt    BigInt   @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([ngoAddress])
+  @@index([chainStatus])
+  @@map("orders_cache")
+}
+
+/// Append-only custody trail.
+/// Each row corresponds to one HandoffRecorded event.
+model HandoffsCache {
+  id        Int      @id @default(autoincrement())
+  matchId   String   @map("match_id")
+  stage     Int
+  actor     String
+  timestamp BigInt
+  txHash    String   @default("") @map("tx_hash")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([matchId])
+  @@index([stage])
+  @@map("handoffs_cache")
+}
+
+/// Cached Food Credit Token mint records.
+/// Populated by the FoodCreditMinted event listener.
+model FoodCreditTokens {
+  tokenId     String   @id @map("token_id")
+  donorAddress String  @map("donor_address")
+  matchId     String   @map("match_id")
+  metadataUri String   @map("metadata_uri")
+  txHash      String   @default("") @map("tx_hash")
+  mintedAt    BigInt   @map("minted_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([donorAddress])
+  @@index([matchId])
+  @@map("food_credit_tokens")
 }

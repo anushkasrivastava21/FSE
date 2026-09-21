@@ -1,0 +1,466 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/listings": {
+      "get": {
+        "operationId": "ListingController_findAll",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by chain status (Open, Matched, etc.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "required": false,
+            "in": "query",
+            "description": "Filter by locationHash",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "donor",
+            "required": false,
+            "in": "query",
+            "description": "Filter by donor wallet address",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get all listings with optional filters",
+        "tags": [
+          "Listings"
+        ]
+      },
+      "post": {
+        "description": "Returns the encoded calldata and target address for the frontend wallet to sign and broadcast.",
+        "operationId": "ListingController_prepareTransaction",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Prepare an unsigned createListing transaction",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/{id}": {
+      "get": {
+        "operationId": "ListingController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "On-chain listing ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a single listing by ID",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/matches": {
+      "get": {
+        "operationId": "MatchingController_findAll",
+        "parameters": [
+          {
+            "name": "listingId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by listing ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List recent matches",
+        "tags": [
+          "Matches"
+        ]
+      }
+    },
+    "/matches/{id}": {
+      "get": {
+        "operationId": "MatchingController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Match ID (bytes32 hex string)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a match by its matchId (bytes32 hex)",
+        "tags": [
+          "Matches"
+        ]
+      }
+    },
+    "/ipfs/upload": {
+      "post": {
+        "operationId": "IpfsController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload (photo, document, etc.)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Upload a file to IPFS via Pinata",
+        "tags": [
+          "IPFS"
+        ]
+      }
+    },
+    "/orders": {
+      "get": {
+        "operationId": "OrderController_findAll",
+        "parameters": [
+          {
+            "name": "ngoAddress",
+            "required": false,
+            "in": "query",
+            "description": "Filter by NGO wallet address",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by chain status",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get cached NGO demand orders with optional filters",
+        "tags": [
+          "Orders"
+        ]
+      },
+      "post": {
+        "description": "Returns encoded calldata and the Order contract address for the NGO frontend wallet to sign and broadcast.",
+        "operationId": "OrderController_preparePlaceOrderTransaction",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Prepare an unsigned placeOrder transaction",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "operationId": "OrderController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "On-chain order ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a single order by on-chain order ID",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/orders/{id}/cancel": {
+      "post": {
+        "description": "Returns encoded calldata for the NGO wallet to sign and broadcast.",
+        "operationId": "OrderController_prepareCancelOrderTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "On-chain order ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Prepare an unsigned cancelOrder transaction",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/handoffs": {
+      "get": {
+        "operationId": "HandoffController_findAll",
+        "parameters": [
+          {
+            "name": "matchId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by match ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "0 = PickedUp, 1 = InTransit, 2 = Delivered",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get cached custody handoffs",
+        "tags": [
+          "Handoffs"
+        ]
+      },
+      "post": {
+        "description": "Returns encoded calldata for the caller's wallet to sign and broadcast.",
+        "operationId": "HandoffController_prepareRecordHandoffTransaction",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Prepare an unsigned recordHandoff transaction",
+        "tags": [
+          "Handoffs"
+        ]
+      }
+    },
+    "/handoffs/{matchId}": {
+      "get": {
+        "operationId": "HandoffController_findByMatchId",
+        "parameters": [
+          {
+            "name": "matchId",
+            "required": true,
+            "in": "path",
+            "description": "MatchingEngine match ID (bytes32)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get complete custody trail for a match",
+        "tags": [
+          "Handoffs"
+        ]
+      }
+    },
+    "/tokens/{donorAddress}": {
+      "get": {
+        "operationId": "TokenController_findByDonorAddress",
+        "parameters": [
+          {
+            "name": "donorAddress",
+            "required": true,
+            "in": "path",
+            "description": "Donor wallet address",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get Food Credit Tokens for a donor",
+        "tags": [
+          "Food Credit Tokens"
+        ]
+      }
+    },
+    "/tokens/match/{matchId}": {
+      "get": {
+        "operationId": "TokenController_findByMatchId",
+        "parameters": [
+          {
+            "name": "matchId",
+            "required": true,
+            "in": "path",
+            "description": "MatchingEngine match ID (bytes32)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get Food Credit Tokens for a match",
+        "tags": [
+          "Food Credit Tokens"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "FSE Backend — Listings, Matching & NGO Orders",
+    "description": "REST API for food surplus listings, matching engine queries, urgency scores, IPFS uploads, NGO demand orders, custody handoffs, and Food Credit Tokens.",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {}
+  }
+}

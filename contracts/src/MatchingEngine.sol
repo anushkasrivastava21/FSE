@@ -37,7 +37,7 @@ contract MatchingEngine is IMatchingEngine {
     /// @dev formula: base_priority * (10000 / (hoursLeft + 1))
     function computeUrgency(uint256 listingId) public view override returns (uint256) {
         IListing.ListingData memory l = listingContract.getListing(listingId);
-        
+
         // If expired, decay multiplier is maxed out at 10000.
         uint256 hoursLeft = 0;
         if (l.expiryTimestamp > block.timestamp) {
@@ -45,15 +45,15 @@ contract MatchingEngine is IMatchingEngine {
         }
 
         uint256 decayMultiplier = 10000 / (hoursLeft + 1);
-        
+
         // base_priority = (qualityTier * 100) + min(quantity, 100)
         // QualityTier: High=0, Medium=1, Low=2 (Wait, typically High=3, but enum is 0,1,2)
         // Let's invert enum for priority: High(0)->3, Medium(1)->2, Low(2)->1
-        uint256 qualityFactor = 3 - l.qualityTier; 
+        uint256 qualityFactor = 3 - l.qualityTier;
         uint256 quantityFactor = l.quantity > 100 ? 100 : l.quantity;
-        
+
         uint256 basePriority = (qualityFactor * 100) + quantityFactor;
-        
+
         return basePriority * decayMultiplier;
     }
 
@@ -72,7 +72,7 @@ contract MatchingEngine is IMatchingEngine {
 
         // Weight is primarily the urgency score of the listing
         uint256 weight = computeUrgency(listingId);
-        
+
         // If order is flagged urgent, give a massive weight boost
         if (o.urgencyFlag) {
             weight += 1000000;
@@ -103,7 +103,7 @@ contract MatchingEngine is IMatchingEngine {
         for (uint256 i = 0; i < n; i++) {
             for (uint256 j = 0; j < n; j++) {
                 uint256 weight = _computeMatchWeight(listingIds[i], orderIds[j]);
-                
+
                 // Feasibility constraint: u[i] + v[j] >= weight(i, j)
                 require(u[i] + v[j] >= weight, "LP Duality: Sub-optimal match submitted");
 
@@ -122,7 +122,7 @@ contract MatchingEngine is IMatchingEngine {
             uint256 urgencyScore = _computeMatchWeight(lId, oId); // already computed above but re-evaluating is cheap
 
             bytes32 matchId = keccak256(abi.encodePacked(lId, oId, block.timestamp));
-            
+
             // Write to mappings (Gate 0 specs)
             matchExists[matchId] = true;
             _matches[matchId] = MatchRecord({

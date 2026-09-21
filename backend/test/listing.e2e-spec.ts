@@ -42,7 +42,7 @@ describe('ListingController (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/listings')
       .send(payload);
-    
+
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('to');
     expect(response.body).toHaveProperty('data');
