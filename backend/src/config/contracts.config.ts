@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 @Injectable()
-export class ContractsConfigService implements OnModuleInit {
+export class ContractsConfigService {
   private readonly logger = new Logger(ContractsConfigService.name);
 
   public listingAddress!: `0x${string}`;
@@ -22,9 +22,11 @@ export class ContractsConfigService implements OnModuleInit {
   public foodCreditTokenAbi!: readonly any[];
   public forecastRegistryAbi!: readonly any[];
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(private readonly config: ConfigService) {
+    this.loadContracts();
+  }
 
-  onModuleInit() {
+  private loadContracts() {
     const deploymentsPath =
       this.config.get<string>("CONTRACT_ADDRESSES_PATH") ||
       path.resolve(__dirname, "../../../deployments/testnet.json");

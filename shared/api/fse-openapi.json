@@ -450,6 +450,71 @@
           "Food Credit Tokens"
         ]
       }
+    },
+    "/ngos/{address}/accuracy": {
+      "get": {
+        "operationId": "ForecastController_getNgoAccuracyHistory",
+        "parameters": [
+          {
+            "name": "address",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Forecast"
+        ]
+      }
+    },
+    "/forecasts/scored": {
+      "get": {
+        "operationId": "ForecastController_getScoredForecasts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Forecast"
+        ]
+      }
+    },
+    "/forecasts/pending": {
+      "get": {
+        "operationId": "ForecastController_getPendingForecasts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Forecast"
+        ]
+      }
+    },
+    "/dashboard/ticker": {
+      "get": {
+        "operationId": "ForecastController_getDashboardTicker",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Forecast"
+        ]
+      }
     }
   },
   "info": {
