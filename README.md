@@ -9,6 +9,41 @@
 | Frontend | Next.js 14 · Tailwind CSS · wagmi · RainbowKit · React Query |
 | Monorepo | pnpm workspaces · Turborepo |
 
+## Quick Start (Localhost Testing)
+
+Since we are using Option B (Local Hardhat Node) to bypass testnet faucet limits:
+
+1. **Start Local Blockchain & Deploy Contracts**
+   ```bash
+   # Terminal 1
+   cd contracts
+   npx hardhat node
+   # Terminal 2
+   cd contracts
+   npx hardhat run scripts/deploy.js --network localhost
+   ```
+
+2. **Start Backend (Indexers & API)**
+   ```bash
+   # Terminal 3
+   cd backend
+   pnpm install
+   pnpm dev
+   ```
+
+3. **Start Frontend**
+   ```bash
+   # Terminal 4
+   cd frontend
+   pnpm install
+   # Ensure .env has NEXT_PUBLIC_CHAIN_NETWORK=localhost
+   pnpm dev
+   ```
+
+## Architecture
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for a comprehensive Mermaid diagram and system overview.
+
 ## Team Verticals
 | Person | Vertical | Contracts | Backend modules | Frontend |
 |---|---|---|---|---|
