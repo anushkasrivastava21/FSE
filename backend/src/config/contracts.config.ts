@@ -121,4 +121,9 @@ export class ContractsConfigService implements OnModuleInit {
       "http://127.0.0.1:8545"
     );
   }
+
+  getChain(): any {
+    const network = this.config.get<string>("CHAIN_NETWORK") || "localhost";
+    return network === "amoy" ? require("viem/chains").polygonAmoy : require("viem/chains").hardhat;
+  }
 }
