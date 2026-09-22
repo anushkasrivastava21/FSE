@@ -36,7 +36,7 @@ export class ForecastIndexer implements OnModuleInit {
       onLogs: async (logs) => {
         for (const log of logs) {
           try {
-            const { ngo, period, expectedQuantity } = log.args as any;
+            const { ngo, period, expectedQuantity } = (log as any).args;
             await this.prisma.forecastsCache.upsert({
               where: {
                 ngoAddress_period: {
@@ -48,11 +48,11 @@ export class ForecastIndexer implements OnModuleInit {
                 ngoAddress: ngo.toLowerCase(),
                 period: Number(period),
                 expectedQuantity: Number(expectedQuantity),
-                txHash: log.transactionHash,
+                txHash: log.transactionHash || "",
               },
               update: {
                 expectedQuantity: Number(expectedQuantity),
-                txHash: log.transactionHash,
+                txHash: log.transactionHash || "",
               }
             });
             this.logger.log(`ForecastSubmitted indexed: NGO ${ngo}, period ${period}, expected ${expectedQuantity}`);
@@ -70,7 +70,7 @@ export class ForecastIndexer implements OnModuleInit {
       onLogs: async (logs) => {
         for (const log of logs) {
           try {
-            const { ngo, period, accuracyScore } = log.args as any;
+            const { ngo, period, accuracyScore } = (log as any).args;
             await this.prisma.forecastsCache.update({
               where: {
                 ngoAddress_period: {
@@ -81,7 +81,7 @@ export class ForecastIndexer implements OnModuleInit {
               data: {
                 accuracyScore: Number(accuracyScore),
                 scored: true,
-                txHash: log.transactionHash,
+                txHash: log.transactionHash || "",
               }
             });
             this.logger.log(`ForecastScored indexed: NGO ${ngo}, period ${period}, score ${accuracyScore}`);

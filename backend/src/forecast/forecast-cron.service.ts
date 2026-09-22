@@ -67,7 +67,7 @@ export class ForecastCronService {
         this.logger.log(`Scoring NGO ${forecast.ngoAddress} for period ${forecast.period} with actual=${actualFulfilled}`);
 
         // Call the scoreForecast function on-chain
-        const { request } = await client.prepareTransactionRequest({
+        const request = await client.prepareTransactionRequest({
           to: this.contracts.forecastRegistryAddress as `0x${string}`,
           data: (client as any).encodeFunctionData({
             abi: this.contracts.forecastRegistryAbi,
