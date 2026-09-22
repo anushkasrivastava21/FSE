@@ -279,3 +279,17 @@ export async function fetchTokensByMatch(matchId: string) {
 
   return res.json();
 }
+
+// ---------------------------------------------------------
+// AI Forecasts — Person C
+// ---------------------------------------------------------
+
+export async function fetchForecasts(location: string) {
+  const res = await fetch(`${API_BASE}/forecasts/${encodeURIComponent(location)}`);
+  
+  if (!res.ok) {
+    throw new Error("Failed to fetch forecasts");
+  }
+
+  return res.json();
+}
