@@ -1,0 +1,30 @@
+# Docker Compose for FSE Backend local development
+# Provides PostgreSQL and Redis for event indexer + urgency cache job.
+# Usage: docker compose up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fse-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: fse_dev
+      POSTGRES_USER: fse
+      POSTGRES_PASSWORD: fse_local_dev
+    volumes:
+      - fse-pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: fse-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - fse-redis-data:/data
+
+volumes:
+  fse-pgdata:
+  fse-redis-data:

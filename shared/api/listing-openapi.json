@@ -1,0 +1,212 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/listings": {
+      "get": {
+        "operationId": "ListingController_findAll",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by chain status (Open, Matched, etc.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "required": false,
+            "in": "query",
+            "description": "Filter by locationHash",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "donor",
+            "required": false,
+            "in": "query",
+            "description": "Filter by donor wallet address",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get all listings with optional filters",
+        "tags": [
+          "Listings"
+        ]
+      },
+      "post": {
+        "description": "Returns the encoded calldata and target address for the frontend wallet to sign and broadcast.",
+        "operationId": "ListingController_prepareTransaction",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Prepare an unsigned createListing transaction",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/{id}": {
+      "get": {
+        "operationId": "ListingController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "On-chain listing ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a single listing by ID",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/matches": {
+      "get": {
+        "operationId": "MatchingController_findAll",
+        "parameters": [
+          {
+            "name": "listingId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by listing ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List recent matches",
+        "tags": [
+          "Matches"
+        ]
+      }
+    },
+    "/matches/{id}": {
+      "get": {
+        "operationId": "MatchingController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Match ID (bytes32 hex string)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get a match by its matchId (bytes32 hex)",
+        "tags": [
+          "Matches"
+        ]
+      }
+    },
+    "/ipfs/upload": {
+      "post": {
+        "operationId": "IpfsController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload (photo, document, etc.)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Upload a file to IPFS via Pinata",
+        "tags": [
+          "IPFS"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "FSE Backend — Person A (Listing & Matching)",
+    "description": "REST API for food surplus listings, matching engine queries, urgency scores, and IPFS uploads.",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {}
+  }
+}
