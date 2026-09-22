@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { createPublicClient, http } from "viem";
-import { hardhat } from "viem/chains";
+import { polygonAmoy } from "viem/chains";
 import { PrismaService } from "../prisma/prisma.service";
 import { ContractsConfigService } from "../config/contracts.config";
 
@@ -26,7 +26,7 @@ export class UrgencyCacheProcessor {
     }
 
     const client = createPublicClient({
-      chain: hardhat,
+      chain: polygonAmoy,
       transport: http(this.contracts.getRpcUrl()),
     });
 

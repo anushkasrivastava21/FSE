@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
 import { createPublicClient, http, parseAbiItem, type Log } from "viem";
-import { hardhat } from "viem/chains";
+import { polygonAmoy } from "viem/chains";
 import { PrismaService } from "../prisma/prisma.service";
 import { ContractsConfigService } from "../config/contracts.config";
 
@@ -30,7 +30,7 @@ export class ListingIndexer implements OnModuleInit {
   private startListening() {
     const rpcUrl = this.contracts.getRpcUrl();
     const client = createPublicClient({
-      chain: hardhat,
+      chain: polygonAmoy,
       transport: http(rpcUrl),
     });
 
@@ -72,7 +72,7 @@ export class ListingIndexer implements OnModuleInit {
       try {
         // Read full listing data from chain
         const client = createPublicClient({
-          chain: hardhat,
+          chain: polygonAmoy,
           transport: http(this.contracts.getRpcUrl()),
         });
 
