@@ -1,9 +1,5 @@
 import { ethers } from "ethers";
-
-const ForecastRegistryABI = [
-  "function submitForecast(bytes32 forecastHash) external returns (uint256)",
-  "function getForecast(uint256 id) external view returns (address provider, bytes32 forecastHash, uint256 timestamp)"
-];
+import ForecastRegistryABI from "./abi/ForecastRegistry.json";
 
 export class ForecastRegistryService {
   private contract: ethers.Contract;
@@ -12,12 +8,12 @@ export class ForecastRegistryService {
     this.contract = new ethers.Contract(contractAddress, ForecastRegistryABI, providerOrSigner);
   }
 
-  async submitForecast(forecastHash: string): Promise<ethers.ContractTransactionResponse> {
-    const tx = await this.contract.submitForecast(forecastHash);
+  async submitForecast(period: number, expectedQuantity: number): Promise<ethers.ContractTransactionResponse> {
+    const tx = await this.contract.submitForecast(period, expectedQuantity);
     return tx;
   }
 
-  async getForecast(id: number) {
-    return await this.contract.getForecast(id);
+  async getNGOAccuracyHistory(ngoAddress: string) {
+    return await this.contract.getNGOAccuracyHistory(ngoAddress);
   }
 }

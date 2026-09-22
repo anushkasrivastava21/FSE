@@ -10,6 +10,7 @@ import { IpfsModule } from "./ipfs/ipfs.module";
 import { OrderModule } from "./order/order.module";
 import { HandoffModule } from "./handoff/handoff.module";
 import { TokenModule } from "./token/token.module";
+import { ForecastModule } from "./forecast/forecast.module";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TokenModule } from "./token/token.module";
     OrderModule,
     HandoffModule,
     TokenModule,
+    ForecastModule,
   ],
   providers: [],
   exports: [],

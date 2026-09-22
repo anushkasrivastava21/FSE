@@ -98,3 +98,22 @@ model FoodCreditTokens {
   @@index([matchId])
   @@map("food_credit_tokens")
 }
+
+/// Cached Forecast data.
+/// Populated by the Person C forecast indexer.
+model ForecastsCache {
+  id               Int      @id @default(autoincrement())
+  ngoAddress       String   @map("ngo_address")
+  period           Int
+  expectedQuantity Int      @map("expected_quantity")
+  actualQuantity   Int      @default(0) @map("actual_quantity")
+  accuracyScore    Int      @default(0) @map("accuracy_score")
+  scored           Boolean  @default(false)
+  txHash           String   @default("") @map("tx_hash")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([ngoAddress, period])
+  @@index([ngoAddress])
+  @@map("forecasts_cache")
+}

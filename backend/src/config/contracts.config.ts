@@ -13,12 +13,14 @@ export class ContractsConfigService implements OnModuleInit {
   public orderAddress!: `0x${string}`;
   public settlementAddress!: `0x${string}`;
   public foodCreditTokenAddress!: `0x${string}`;
+  public forecastRegistryAddress!: `0x${string}`;
 
   public listingAbi!: readonly any[];
   public matchingEngineAbi!: readonly any[];
   public orderAbi!: readonly any[];
   public settlementAbi!: readonly any[];
   public foodCreditTokenAbi!: readonly any[];
+  public forecastRegistryAbi!: readonly any[];
 
   constructor(private readonly config: ConfigService) {}
 
@@ -54,6 +56,7 @@ export class ContractsConfigService implements OnModuleInit {
     this.settlementAddress = addrs.Settlement as `0x${string}`;
     this.foodCreditTokenAddress =
       addrs.FoodCreditToken as `0x${string}`;
+    this.forecastRegistryAddress = addrs.ForecastRegistry as `0x${string}`;
 
     this.logger.log(`Loaded contract addresses for "${network}"`);
     this.logger.log(`  Listing:          ${this.listingAddress}`);
@@ -63,6 +66,7 @@ export class ContractsConfigService implements OnModuleInit {
     this.logger.log(
       `  FoodCreditToken:  ${this.foodCreditTokenAddress}`,
     );
+    this.logger.log(`  ForecastRegistry: ${this.forecastRegistryAddress}`);
 
     const abiDir = path.resolve(__dirname, "../../../shared/abi");
 
@@ -97,6 +101,13 @@ export class ContractsConfigService implements OnModuleInit {
     this.foodCreditTokenAbi = JSON.parse(
       fs.readFileSync(
         path.join(abiDir, "FoodCreditToken.json"),
+        "utf-8",
+      ),
+    );
+
+    this.forecastRegistryAbi = JSON.parse(
+      fs.readFileSync(
+        path.join(abiDir, "ForecastRegistry.json"),
         "utf-8",
       ),
     );
