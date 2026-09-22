@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
 import { createPublicClient, http } from "viem";
-import { polygonAmoy } from "viem/chains";
+
 import { PrismaService } from "../prisma/prisma.service";
 import { ContractsConfigService } from "../config/contracts.config";
 
@@ -26,7 +26,7 @@ export class OrderIndexer implements OnModuleInit {
 
   private startListening() {
     const client = createPublicClient({
-      chain: polygonAmoy,
+      chain: this.contracts.getChain(),
       transport: http(this.contracts.getRpcUrl()),
     });
 

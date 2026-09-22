@@ -2,7 +2,7 @@
 
 import { getDefaultConfig, RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-import { polygonAmoy } from "wagmi/chains";
+import { polygonAmoy, hardhat } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -10,7 +10,7 @@ const config = getDefaultConfig({
   appName: "FSE — Food Surplus Exchange",
   // Use env var or fallback to a demo project ID
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "demo-fse-project",
-  chains: [polygonAmoy],
+  chains: process.env.NEXT_PUBLIC_CHAIN_NETWORK === "localhost" ? [hardhat, polygonAmoy] : [polygonAmoy, hardhat],
   ssr: true,
 });
 

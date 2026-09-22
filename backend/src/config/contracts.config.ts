@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 @Injectable()
-export class ContractsConfigService implements OnModuleInit {
+export class ContractsConfigService {
   private readonly logger = new Logger(ContractsConfigService.name);
 
   public listingAddress!: `0x${string}`;
@@ -22,9 +22,11 @@ export class ContractsConfigService implements OnModuleInit {
   public foodCreditTokenAbi!: readonly any[];
   public forecastRegistryAbi!: readonly any[];
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(private readonly config: ConfigService) {
+    this.loadContracts();
+  }
 
-  onModuleInit() {
+  private loadContracts() {
     const deploymentsPath =
       this.config.get<string>("CONTRACT_ADDRESSES_PATH") ||
       path.resolve(__dirname, "../../../deployments/testnet.json");
@@ -120,5 +122,10 @@ export class ContractsConfigService implements OnModuleInit {
       this.config.get<string>("AMOY_RPC_URL") ||
       "http://127.0.0.1:8545"
     );
+  }
+
+  getChain(): any {
+    const network = this.config.get<string>("CHAIN_NETWORK") || "localhost";
+    return network === "amoy" ? require("viem/chains").polygonAmoy : require("viem/chains").hardhat;
   }
 }

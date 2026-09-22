@@ -2,7 +2,6 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { createWalletClient, http, custom } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { polygonAmoy } from "viem/chains";
 import { PrismaService } from "../prisma/prisma.service";
 import { ContractsConfigService } from "../config/contracts.config";
 
@@ -37,7 +36,7 @@ export class ForecastCronService {
     const account = privateKeyToAccount(`0x${privateKey.replace('0x', '')}`);
     const client = createWalletClient({
       account,
-      chain: polygonAmoy,
+      chain: this.contracts.getChain(),
       transport: http(this.contracts.getRpcUrl()),
     });
 
@@ -69,6 +68,7 @@ export class ForecastCronService {
         // Call the scoreForecast function on-chain
         const request = await client.prepareTransactionRequest({
           to: this.contracts.forecastRegistryAddress as `0x${string}`,
+          chain: this.contracts.getChain(),
           data: (client as any).encodeFunctionData({
             abi: this.contracts.forecastRegistryAbi,
             functionName: "scoreForecast",
