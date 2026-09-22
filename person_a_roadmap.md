@@ -475,11 +475,11 @@ When a listing's status changes to `Matched`:
 
 | Week | You do |
 |---|---|
-| **1** | Gate 0 (joint) — repo scaffold, publish `matchId` format + `MatchExecuted` stub schema |
-| **2** | Write `Listing.sol` — functions, events, access control; local unit tests |
-| **3** | Write `MatchingEngine.sol` — `computeUrgency()` + `matchOrders()`; unit tests ≥90% |
-| **4** | Gate 1 — deploy both to Amoy testnet; export ABIs; freeze event schema for B & C |
-| **5** | Build indexer (viem event listener → Postgres); build urgency cache job (BullMQ) |
+| **1** | Gate 0 — repo scaffold, interface stubs, matchId + MatchExecuted schema published | ✅ Done |
+| **2** | Write `Listing.sol` — functions, events, access control; local unit tests | ✅ Done |
+| **3** | Write `MatchingEngine.sol` — `computeUrgency()` + `matchOrders()`; unit tests ≥90% | ✅ Done |
+| **4** | Gate 1 — deploy both to Amoy testnet; export ABIs to `shared/abi/`; freeze event schema | ✅ Done (Deployed locally for now, ABIs/TypeChain ready in `shared/`) |
+| **5** | Build indexer (viem event listener → Postgres); build urgency cache job (BullMQ) | 🔴 **Next** |
 | **6** | Build REST API (`/listings`, `/matches/:id`); IPFS upload; write integration tests |
 | **7** | Gate 2 — API live on testnet; OpenAPI spec frozen; types generated into `shared/` |
 | **8** | Build donor portal: wallet connect + "list surplus" form |
