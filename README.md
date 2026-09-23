@@ -44,6 +44,10 @@ Since we are using Option B (Local Hardhat Node) to bypass testnet faucet limits
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for a comprehensive Mermaid diagram and system overview.
 
+## Technical Contributions
+
+See the [Final Technical Contribution Report](./docs/final_technical_contribution.md) for a detailed breakdown of each team member's work based on Git history.
+
 ## Team Verticals
 | Person | Vertical | Contracts | Backend modules | Frontend |
 |---|---|---|---|---|
@@ -95,6 +99,6 @@ pnpm --filter frontend dev
 | Gate | Trigger | Status |
 |---|---|---|
 | Gate 0 | Repo scaffold, naming locked, interfaces published | ✅ Done |
-| Gate 1 | All contracts deployed to testnet, ABIs frozen | ⏳ Week 4 |
+| Gate 1 | All contracts deployed to testnet, ABIs frozen | ✅ Done |
 | Gate 2 | All APIs live, OpenAPI spec frozen | ⏳ Week 7 |
 | Gate 3 | Full flows demoable end-to-end | ⏳ Week 10 |
