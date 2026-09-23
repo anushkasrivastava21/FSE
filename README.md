@@ -46,6 +46,12 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for a comprehensive Mermaid diagram and
 
 ## Technical Contributions
 
+| Team Member | Primary Focus | Key Contributions |
+|---|---|---|
+| **Anushka Srivastava** | Architecture, Person A, Backend | Monorepo scaffolding, docs (PRD/TRD), Person A features, dynamic indexers, Forecast module, testnet deployments, and UI dashboards. |
+| **Kavin** | Person C | `ForecastRegistry` smart contracts, tests, mock implementations, and frontend service integration. |
+| **Yashasvi Adlak** | Person B | NGO `Order` & `Settlement` contracts, Food Credit Token integration, and order flow alignment. |
+
 See the [Final Technical Contribution Report](./docs/final_technical_contribution.md) for a detailed breakdown of each team member's work based on Git history.
 
 ## Team Verticals
