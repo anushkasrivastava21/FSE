@@ -100,5 +100,5 @@ pnpm --filter frontend dev
 |---|---|---|
 | Gate 0 | Repo scaffold, naming locked, interfaces published | ✅ Done |
 | Gate 1 | All contracts deployed to testnet, ABIs frozen | ✅ Done |
-| Gate 2 | All APIs live, OpenAPI spec frozen | ⏳ Week 7 |
-| Gate 3 | Full flows demoable end-to-end | ⏳ Week 10 |
+| Gate 2 | All APIs live, OpenAPI spec frozen | ✅ Done |
+| Gate 3 | Full flows demoable end-to-end | ✅ Done |
