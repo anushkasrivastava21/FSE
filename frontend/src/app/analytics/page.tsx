@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
@@ -42,9 +42,13 @@ export default function AnalyticsPage() {
     }
   };
 
-  if (isSuccess) {
-    toast.success("Forecast submitted to blockchain!");
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Forecast submitted to blockchain!");
+      setPeriod("");
+      setQuantity("");
+    }
+  }, [isSuccess]);
 
   return (
     <div className="min-h-screen">
@@ -64,10 +68,10 @@ export default function AnalyticsPage() {
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 py-12 animate-fade-in grid md:grid-cols-2 gap-8">
+      <main className="max-w-6xl mx-auto px-6 py-12 grid md:grid-cols-2 gap-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">Predictive Analytics</h1>
-          <p className="text-surface-200/50 mb-8">
+          <p className="text-surface-400 mb-8">
             Submit food surplus forecasts to the blockchain and view historical predictions.
           </p>
 
@@ -96,15 +100,13 @@ export default function AnalyticsPage() {
             
             <button
               type="submit"
-              disabled={isPending || isConfirming || !isConnected}
-              className="btn-primary w-full mt-4 py-3"
+              disabled={isPending || isConfirming || !period || !quantity}
+              className="btn-primary w-full mt-4 py-3 text-lg"
             >
-              {!isConnected 
-                ? "Connect Wallet to Submit" 
-                : isPending 
-                ? "Waiting..." 
-                : isConfirming 
-                ? "Confirming on-chain..." 
+              {isPending
+                ? "Please confirm in your wallet..."
+                : isConfirming
+                ? "Confirming on-chain..."
                 : "Submit Forecast"}
             </button>
           </form>

@@ -3,9 +3,17 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSystemStats } from "@/lib/api";
 
 export default function HomePage() {
   const { isConnected } = useAccount();
+
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["systemStats"],
+    queryFn: fetchSystemStats,
+    refetchInterval: 10000,
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -25,126 +33,90 @@ export default function HomePage() {
         </div>
       </nav>
 
-      <main className="flex-1 px-6 py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500/10 border border-brand-500/20 rounded-full text-brand-400 text-sm font-medium mb-8">
-              <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
-              Live on Polygon Amoy Testnet
+      <main className="flex-1 px-6 py-12 md:py-24">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr_380px] gap-12 lg:gap-24">
+          
+          {/* Left Column: Hero & Copy */}
+          <div className="flex flex-col justify-center">
+            <div className="inline-flex items-center gap-2 text-surface-400 text-sm font-semibold mb-6 uppercase tracking-wider">
+              Polygon Amoy Testnet
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Reduce food waste.
-              <br />
-              <span className="text-brand-400">Feed communities.</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">
+              Log surplus inventory. <br />
+              Dispatch to local NGOs.
             </h1>
 
-            <p className="text-xl text-surface-200/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-              A decentralized exchange matching surplus food donors with NGOs
-              using urgency-scored, transparent matching — verified on-chain.
+            <p className="text-lg text-surface-300 mb-10 max-w-xl leading-relaxed">
+              FSE connects donors holding excess food with organizations that need it. 
+              Built on transparent on-chain matching algorithms to prioritize delivery speed.
             </p>
 
-            {!isConnected && (
-              <div className="flex flex-col items-center gap-4 mb-14">
-                <p className="text-surface-200/50 text-sm">
-                  Connect your wallet to use the exchange
-                </p>
-
-                <ConnectButton />
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
-              <section className="card">
-                <div className="text-3xl mb-4">📦</div>
-
-                <h2 className="text-2xl font-bold mb-2">
-                  Donor Portal
-                </h2>
-
-                <p className="text-surface-200/60 mb-6">
-                  Create surplus food listings, track matches, and view Food
-                  Credit Token history.
-                </p>
-
-                <div className="flex flex-col gap-3">
-                  <Link
-                    href="/donor/listings"
-                    className="btn-primary text-center"
-                  >
-                    My Listings
-                  </Link>
-
-                  <Link
-                    href="/donor/listings/new"
-                    className="btn-secondary text-center"
-                  >
-                    List Surplus Food
-                  </Link>
-
-                  <Link
-                    href="/donor/tokens"
-                    className="btn-secondary text-center"
-                  >
-                    Food Credit Tokens
-                  </Link>
-                </div>
-              </section>
-
-              <section className="card">
-                <div className="text-3xl mb-4">🏥</div>
-
-                <h2 className="text-2xl font-bold mb-2">
-                  NGO Portal
-                </h2>
-
-                <p className="text-surface-200/60 mb-6">
-                  Register your organization, place food demand orders, and
-                  track order status.
-                </p>
-
-                <div className="flex flex-col gap-3">
-                  <Link
-                    href="/ngo/register"
-                    className="btn-primary text-center"
-                  >
-                    NGO Registration
-                  </Link>
-
-                  <Link
-                    href="/ngo/orders/new"
-                    className="btn-secondary text-center"
-                  >
-                    Place Demand Order
-                  </Link>
-
-                  <Link
-                    href="/ngo/orders"
-                    className="btn-secondary text-center"
-                  >
-                    My Demand Orders
-                  </Link>
-                </div>
-              </section>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 pt-10 border-t border-surface-700/30">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-8 border-t border-surface-800">
               {[
-                { label: "Listings Created", value: "—" },
-                { label: "Matches Made", value: "—" },
-                { label: "Food Saved (kg)", value: "—" },
+                { label: "Active Listings", value: isLoading ? "..." : stats?.activeListings ?? "0" },
+                { label: "Matches Today", value: isLoading ? "..." : stats?.matchesToday ?? "0" },
+                { label: "Volume (kg)", value: isLoading ? "..." : (stats?.volume ?? 0).toLocaleString() },
               ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold text-white">
+                <div key={stat.label}>
+                  <div className="text-2xl font-bold text-white mb-1">
                     {stat.value}
                   </div>
-
-                  <div className="text-sm text-surface-200/50 mt-1">
+                  <div className="text-sm font-medium text-surface-500">
                     {stat.label}
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Right Column: Portal Navigation Sidebar */}
+          <div className="flex flex-col gap-6">
+            {!isConnected && (
+              <div className="card bg-surface-900/50 border-brand-500/30 mb-2">
+                <p className="text-sm text-surface-200 mb-4 font-medium">
+                  Connect your wallet to access the exchange.
+                </p>
+                <ConnectButton />
+              </div>
+            )}
+
+            {/* Donor Actions */}
+            <div className="card">
+              <h2 className="text-sm font-bold text-surface-400 uppercase tracking-wider mb-4">Donor Portal</h2>
+              <div className="flex flex-col gap-2">
+                <Link href="/donor/listings/new" className="btn-primary w-full justify-start">
+                  + Log Surplus Food
+                </Link>
+                <Link href="/donor/listings" className="btn-secondary w-full justify-start">
+                  Active Listings
+                </Link>
+              </div>
+            </div>
+
+            {/* NGO Actions */}
+            <div className="card">
+              <h2 className="text-sm font-bold text-surface-400 uppercase tracking-wider mb-4">NGO Portal</h2>
+              <div className="flex flex-col gap-2">
+                <Link href="/ngo/orders/new" className="btn-primary w-full justify-start">
+                  + Request Delivery
+                </Link>
+                <Link href="/ngo/orders" className="btn-secondary w-full justify-start">
+                  Active Requests
+                </Link>
+              </div>
+            </div>
+
+            {/* Analytics */}
+            <div className="card">
+              <h2 className="text-sm font-bold text-surface-400 uppercase tracking-wider mb-4">System Data</h2>
+              <div className="flex flex-col gap-2">
+                <Link href="/analytics" className="btn-secondary w-full justify-start">
+                  Live Exchange Ticker
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </main>

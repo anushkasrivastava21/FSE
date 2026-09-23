@@ -303,3 +303,13 @@ export async function fetchDashboardTicker() {
 
   return res.json();
 }
+
+export async function fetchSystemStats() {
+  const res = await fetch(`${API_BASE}/stats`);
+  
+  if (!res.ok) {
+    throw new Error("Failed to fetch system stats");
+  }
+
+  return res.json();
+}

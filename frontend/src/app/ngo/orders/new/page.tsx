@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { keccak256, toBytes } from "viem";
 import { preparePlaceOrderTx } from "../../../../lib/api";
 
 export default function NewOrderPage() {
@@ -39,15 +40,16 @@ export default function NewOrderPage() {
     }
 
     if (!locationHash.trim()) {
-      setFormError("Location hash is required.");
+      setFormError("Location is required.");
       return;
     }
 
     try {
+      const hashedLocation = keccak256(toBytes(locationHash.trim()));
       const tx = await preparePlaceOrderTx({
         quantity: parsedQuantity,
         urgencyFlag,
-        locationHash: locationHash.trim(),
+        locationHash: hashedLocation,
       });
 
       await sendTransactionAsync({
@@ -175,7 +177,7 @@ export default function NewOrderPage() {
                 htmlFor="locationHash"
                 className="block text-sm font-medium mb-2"
               >
-                Location hash
+                Pickup Region / Pincode
               </label>
 
               <input
@@ -183,14 +185,13 @@ export default function NewOrderPage() {
                 type="text"
                 value={locationHash}
                 onChange={(event) => setLocationHash(event.target.value)}
-                placeholder="0x..."
+                placeholder="e.g. 400001 or Mumbai Central"
                 required
-                className="input font-mono"
+                className="input"
               />
 
               <p className="text-xs text-surface-200/40 mt-2">
-                This must be the bytes32 location hash expected by the Order
-                contract.
+                This is hashed on-chain to match with nearby donors.
               </p>
             </div>
 
