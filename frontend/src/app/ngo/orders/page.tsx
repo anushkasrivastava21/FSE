@@ -265,22 +265,18 @@ export default function NgoOrdersPage() {
                 Loading orders...
               </div>
             ) : orders.length === 0 ? (
-              <div className="card text-center py-12">
-                <div className="text-4xl mb-4">📋</div>
-
-                <h2 className="text-xl font-bold mb-2">
-                  No demand orders yet
+              <div className="card flex flex-col items-center justify-center py-20 text-center">
+                <h2 className="text-xl font-bold mb-2 text-surface-200">
+                  No active requests
                 </h2>
-
-                <p className="text-surface-200/50 mb-6">
-                  Place your first demand order to request surplus food.
+                <p className="text-surface-400 mb-8 max-w-sm">
+                  You haven't placed any demand orders yet. Request surplus food to match with local donors.
                 </p>
-
                 <Link
                   href="/ngo/orders/new"
-                  className="btn-primary inline-block"
+                  className="btn-primary"
                 >
-                  Place Demand Order
+                  Request Delivery
                 </Link>
               </div>
             ) : (

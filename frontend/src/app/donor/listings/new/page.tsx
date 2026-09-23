@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { keccak256, toBytes } from "viem";
@@ -83,17 +83,18 @@ export default function NewListingPage() {
         ],
       });
 
-      toast.success("Transaction submitted!");
     } catch (err: any) {
       toast.error(err.message || "Transaction failed");
     }
   };
 
   // Redirect on success
-  if (isSuccess) {
-    toast.success("Listing created on-chain! 🎉");
-    router.push("/donor/listings");
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Listing created on-chain! 🎉");
+      router.push("/donor/listings");
+    }
+  }, [isSuccess, router]);
 
   if (!isConnected) {
     return (
@@ -128,11 +129,10 @@ export default function NewListingPage() {
         </div>
       </nav>
 
-      <main className="max-w-2xl mx-auto px-6 py-12 animate-fade-in">
+      <main className="max-w-2xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-2">List Surplus Food</h1>
-        <p className="text-surface-200/50 mb-8">
-          Create an on-chain listing. The matching engine will automatically
-          find the best NGO based on urgency scoring.
+        <p className="text-surface-400 mb-8">
+          Log surplus inventory for immediate local dispatch.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -145,10 +145,10 @@ export default function NewListingPage() {
                   key={ft.value}
                   type="button"
                   onClick={() => updateField("foodType", ft.value)}
-                  className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
+                  className={`px-4 py-3 rounded-sm border text-sm font-medium transition-colors ${
                     form.foodType === ft.value
-                      ? "bg-brand-600/20 border-brand-500 text-brand-400"
-                      : "bg-surface-850 border-surface-700 text-surface-200/70 hover:border-surface-200/30"
+                      ? "bg-surface-800 border-surface-500 text-white"
+                      : "bg-surface-900 border-surface-800 text-surface-400 hover:border-surface-600"
                   }`}
                 >
                   {ft.label}
@@ -201,22 +201,22 @@ export default function NewListingPage() {
                   key={qt.value}
                   type="button"
                   onClick={() => updateField("qualityTier", qt.value)}
-                  className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
+                  className={`w-full text-left px-4 py-3 rounded-sm border transition-colors ${
                     form.qualityTier === qt.value
-                      ? "bg-brand-600/20 border-brand-500"
-                      : "bg-surface-850 border-surface-700 hover:border-surface-200/30"
+                      ? "bg-surface-800 border-surface-500"
+                      : "bg-surface-900 border-surface-800 hover:border-surface-600"
                   }`}
                 >
                   <span
                     className={`font-medium ${
                       form.qualityTier === qt.value
-                        ? "text-brand-400"
-                        : "text-white"
+                        ? "text-white"
+                        : "text-surface-400"
                     }`}
                   >
                     {qt.label}
                   </span>
-                  <span className="text-sm text-surface-200/50 ml-2">
+                  <span className="text-sm text-surface-500 ml-2">
                     — {qt.description}
                   </span>
                 </button>
@@ -259,7 +259,7 @@ export default function NewListingPage() {
               className="btn-primary w-full text-lg py-4"
             >
               {isPending
-                ? "Waiting for wallet..."
+                ? "Please confirm in your wallet..."
                 : isConfirming
                 ? "Confirming on-chain..."
                 : "🚀 Create Listing"}

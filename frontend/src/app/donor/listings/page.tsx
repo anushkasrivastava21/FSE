@@ -180,14 +180,13 @@ export default function MyListingsPage() {
             </p>
           </div>
         ) : listings.length === 0 ? (
-          <div className="card text-center py-16">
-            <div className="text-4xl mb-4">📦</div>
-            <h3 className="text-xl font-semibold mb-2">No listings yet</h3>
-            <p className="text-surface-200/50 mb-6">
-              Create your first food surplus listing
+          <div className="card flex flex-col items-center justify-center py-20 text-center">
+            <h3 className="text-xl font-bold mb-2 text-surface-200">No active listings</h3>
+            <p className="text-surface-400 mb-8 max-w-sm">
+              You haven't logged any surplus inventory yet. Add your first listing to match with local NGOs.
             </p>
             <Link href="/donor/listings/new" className="btn-primary">
-              ✨ List Surplus Food
+              Log Surplus Food
             </Link>
           </div>
         ) : (

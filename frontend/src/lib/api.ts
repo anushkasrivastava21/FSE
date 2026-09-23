@@ -284,11 +284,31 @@ export async function fetchTokensByMatch(matchId: string) {
 // AI Forecasts — Person C
 // ---------------------------------------------------------
 
-export async function fetchForecasts(location: string) {
-  const res = await fetch(`${API_BASE}/forecasts/${encodeURIComponent(location)}`);
+export async function fetchForecastsPending() {
+  const res = await fetch(`${API_BASE}/forecasts/pending`);
   
   if (!res.ok) {
-    throw new Error("Failed to fetch forecasts");
+    throw new Error("Failed to fetch pending forecasts");
+  }
+
+  return res.json();
+}
+
+export async function fetchDashboardTicker() {
+  const res = await fetch(`${API_BASE}/dashboard/ticker`);
+  
+  if (!res.ok) {
+    throw new Error("Failed to fetch dashboard ticker");
+  }
+
+  return res.json();
+}
+
+export async function fetchSystemStats() {
+  const res = await fetch(`${API_BASE}/stats`);
+  
+  if (!res.ok) {
+    throw new Error("Failed to fetch system stats");
   }
 
   return res.json();

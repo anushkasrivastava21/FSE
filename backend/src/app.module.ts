@@ -11,6 +11,7 @@ import { OrderModule } from "./order/order.module";
 import { HandoffModule } from "./handoff/handoff.module";
 import { TokenModule } from "./token/token.module";
 import { ForecastModule } from "./forecast/forecast.module";
+import { StatsModule } from "./stats/stats.module";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ForecastModule } from "./forecast/forecast.module";
     HandoffModule,
     TokenModule,
     ForecastModule,
+    StatsModule,
   ],
   providers: [],
   exports: [],
