@@ -91,6 +91,9 @@ export default function HomePage() {
                 <Link href="/donor/listings" className="btn-secondary w-full justify-start">
                   Active Listings
                 </Link>
+                <Link href="/donor/tokens" className="btn-secondary w-full justify-start">
+                  Food Credit Tokens
+                </Link>
               </div>
             </div>
 
@@ -98,6 +101,9 @@ export default function HomePage() {
             <div className="card">
               <h2 className="text-sm font-bold text-surface-400 uppercase tracking-wider mb-4">NGO Portal</h2>
               <div className="flex flex-col gap-2">
+                <Link href="/ngo/register" className="btn-primary w-full justify-start">
+                  + Register NGO
+                </Link>
                 <Link href="/ngo/orders/new" className="btn-primary w-full justify-start">
                   + Request Delivery
                 </Link>

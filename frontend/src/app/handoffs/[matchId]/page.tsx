@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchHandoffsByMatchId } from "../../../lib/api";
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { fetchHandoffsByMatchId, prepareRecordHandoffTx } from "../../../lib/api";
 
 type Handoff = {
   id: number;
@@ -59,6 +60,10 @@ export default function HandoffDetailPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const { address } = useAccount();
+  const { sendTransactionAsync, data: txHash, isPending } = useSendTransaction();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+
   const loadHandoffs = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -83,7 +88,29 @@ export default function HandoffDetailPage({
     loadHandoffs();
   }, [loadHandoffs]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      loadHandoffs();
+    }
+  }, [isSuccess, loadHandoffs]);
+
   const delivered = handoffs.some((handoff) => handoff.stage === 2);
+  const nextStage = handoffs.length;
+
+  async function handleRecordStage() {
+    if (!address || nextStage > 2) return;
+    try {
+      const tx = await prepareRecordHandoffTx({
+        matchId,
+        stage: nextStage,
+        actor: address,
+      });
+      await sendTransactionAsync({ to: tx.to, data: tx.data });
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Failed to record handoff");
+    }
+  }
 
   return (
     <main className="min-h-screen px-6 py-10">
@@ -161,6 +188,16 @@ export default function HandoffDetailPage({
                   {delivered ? "✓" : "🚚"}
                 </div>
               </div>
+
+              {!delivered && (
+                <button
+                  onClick={handleRecordStage}
+                  disabled={isPending || isConfirming || !address}
+                  className="btn-primary w-full mb-6 py-3"
+                >
+                  {isPending ? "Confirm in wallet..." : isConfirming ? "Recording on-chain..." : `Record Next Stage: ${STAGES[nextStage]?.label}`}
+                </button>
+              )}
 
               <div className="space-y-4">
                 {STAGES.map((stage) => {

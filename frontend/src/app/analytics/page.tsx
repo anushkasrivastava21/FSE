@@ -22,7 +22,7 @@ export default function AnalyticsPage() {
   const { data: tickerData, isLoading: isLoadingTicker } = useQuery({
     queryKey: ["ticker"],
     queryFn: () => fetchDashboardTicker(),
-    refetchInterval: 15_000,
+    refetchInterval: 500,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,9 +33,12 @@ export default function AnalyticsPage() {
       const { forecastRegistry } = getContractAddresses();
       writeContract({
         address: forecastRegistry,
-        abi: ForecastRegistryABI,
+        abi: ForecastRegistryABI as any,
         functionName: "submitForecast",
-        args: [BigInt(period), BigInt(quantity)],
+        args: [
+          BigInt(Math.floor(Number(period || 0))), 
+          BigInt(Math.floor(Number(quantity || 0)))
+        ],
       });
     } catch (err: any) {
       toast.error(err.message || "Failed to submit forecast");
@@ -144,15 +147,15 @@ export default function AnalyticsPage() {
               ) : (
                 <div className="space-y-3">
                   {tickerData?.recentTrades?.map((trade: any, idx: number) => (
-                    <div key={idx} className="card p-4 flex justify-between items-center">
+                    <Link href={`/handoffs/${trade.matchId}`} key={idx} className="card p-4 flex justify-between items-center hover:border-brand-500/50 transition cursor-pointer">
                       <div>
-                        <div className="font-semibold">Match #{trade.id}</div>
+                        <div className="font-semibold text-brand-400 hover:underline">Match #{trade.matchId}</div>
                         <div className="text-xs text-surface-200/50 font-mono mt-1">Listing {trade.listingId} ↔ Order {trade.orderId}</div>
                       </div>
                       <div className="text-right">
-                        <div className="badge badge-matched">Urgency: {trade.urgencyScoreAtMatch}</div>
+                        <div className="badge badge-matched">Urgency: {trade.urgencyAtMatch}</div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

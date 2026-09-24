@@ -56,12 +56,17 @@ export class ForecastService {
       take: 10,
     });
 
-    // Simplified stats for now
+    const formattedTrades = recentTrades.map((t) => ({
+      ...t,
+      urgencyAtMatch: Number(t.urgencyAtMatch),
+      matchedAt: Number(t.matchedAt),
+    }));
+
     return {
       totalListings,
       totalOrders,
       tradeVolumeToday: recentTrades.length,
-      recentTrades,
+      recentTrades: formattedTrades,
     };
   }
 }
