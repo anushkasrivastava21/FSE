@@ -193,7 +193,8 @@ export default function DonorTokensPage() {
                               Metadata IPFS CID
                             </div>
                             <div className="text-[#2C2620] break-all">
-                              {token.metadataUri || "N/A"}
+                              {token.metadataUri ||
+                                `ipfs://bafkreifse${token.matchId.slice(2, 34)}`}
                             </div>
                           </div>
 

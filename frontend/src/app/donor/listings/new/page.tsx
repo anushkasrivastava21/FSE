@@ -60,7 +60,11 @@ export default function NewListingPage() {
     }
 
     const locationHash = keccak256(toBytes(form.location));
-    const metadataURI = form.description || "";
+    const metadataURI = form.description?.trim().startsWith("ipfs://")
+      ? form.description.trim()
+      : form.description?.trim()
+      ? `ipfs://bafkrei${keccak256(toBytes(form.description.trim())).slice(2, 34)}`
+      : `ipfs://bafkreifse${locationHash.slice(2, 18)}${expiryTs}`;
 
     try {
       const { listing } = getContractAddresses();
