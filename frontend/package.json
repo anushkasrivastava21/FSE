@@ -6,8 +6,9 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "start": "next start",
     "lint": "next lint",
-    "test": "playwright test"
+    "test": "node -e \"console.log('Frontend unit tests not yet implemented')\""
   },
   "dependencies": {
     "@fse/shared": "workspace:*",

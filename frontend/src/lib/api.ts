@@ -96,6 +96,28 @@ export async function fetchMatch(id: string) {
   return res.json();
 }
 
+export async function executeMatching(): Promise<{
+  success: boolean;
+  message: string;
+  txHash?: string;
+  matchedCount?: number;
+  pairs?: Array<{ listingId: string; orderId: string; weight: string }>;
+}> {
+  const res = await fetch(`${API_BASE}/matches/execute`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to execute matching engine");
+  }
+
+  return res.json();
+}
+
 // ---------------------------------------------------------
 // Orders — Person B
 // ---------------------------------------------------------

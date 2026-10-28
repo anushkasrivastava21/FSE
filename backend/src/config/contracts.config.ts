@@ -118,6 +118,10 @@ export class ContractsConfigService {
   }
 
   getRpcUrl(): string {
+    const network = this.config.get<string>("CHAIN_NETWORK") || "localhost";
+    if (network === "localhost") {
+      return "http://127.0.0.1:8545";
+    }
     return (
       this.config.get<string>("AMOY_RPC_URL") ||
       "http://127.0.0.1:8545"

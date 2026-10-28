@@ -42,3 +42,8 @@ lcov.info
 
 # ── TypeScript build cache ────────────────────────────────
 *.tsbuildinfo
+
+# ── Media & logs ──────────────────────────────────────────
+*.mp4
+git_commits.txt
+git_log_fse.txt

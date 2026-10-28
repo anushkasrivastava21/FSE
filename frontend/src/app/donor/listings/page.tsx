@@ -8,27 +8,22 @@ import { fetchListings } from "@/lib/api";
 import { FOOD_TYPES } from "@/lib/contracts";
 
 function UrgencyBar({ score }: { score: string }) {
-  // Normalize score: 0 → 0%, 5_000_000+ → 100%
   const raw = parseInt(score || "0", 10);
   const pct = Math.min(100, Math.max(0, (raw / 5_000_000) * 100));
 
-  const getColor = (p: number) => {
-    if (p < 30) return "bg-green-500";
-    if (p < 65) return "bg-yellow-500";
-    return "bg-red-500";
-  };
-
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-xs text-surface-200/50">Urgency</span>
-        <span className="text-xs font-mono text-surface-200/70">
+    <div className="w-full mt-3 pt-3 border-t border-[#C8BFB0]/40">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[11px] font-mono-wabi text-[#8B7E6A] uppercase tracking-wider">
+          Urgency Index
+        </span>
+        <span className="text-xs font-mono-wabi text-[#4A4238] font-medium">
           {raw.toLocaleString()}
         </span>
       </div>
-      <div className="h-2 bg-surface-800 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[#C8BFB0]/40 rounded-sm overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${getColor(pct)}`}
+          className="h-full rounded-sm transition-all duration-500 bg-gradient-to-r from-[#8B7E6A] via-[#C47952] to-[#A65E3A]"
           style={{ width: `${Math.max(3, pct)}%` }}
         />
       </div>
@@ -52,7 +47,9 @@ function ExpiryCountdown({ expiryTs }: { expiryTs: string }) {
   const expiry = parseInt(expiryTs, 10);
   const diff = expiry - now;
 
-  if (diff <= 0) return <span className="text-red-400 text-sm">Expired</span>;
+  if (diff <= 0) {
+    return <span className="font-mono-wabi text-xs text-[#A65E3A] font-medium">Expired</span>;
+  }
 
   const hours = Math.floor(diff / 3600);
   const mins = Math.floor((diff % 3600) / 60);
@@ -60,19 +57,19 @@ function ExpiryCountdown({ expiryTs }: { expiryTs: string }) {
   if (hours > 24) {
     const days = Math.floor(hours / 24);
     return (
-      <span className="text-surface-200/70 text-sm">
-        {days}d {hours % 24}h left
+      <span className="font-mono-wabi text-xs text-[#8B7E6A]">
+        {days}d {hours % 24}h remaining
       </span>
     );
   }
 
   return (
     <span
-      className={`text-sm font-medium ${
-        hours < 6 ? "text-red-400" : hours < 12 ? "text-yellow-400" : "text-surface-200/70"
+      className={`font-mono-wabi text-xs ${
+        hours < 6 ? "text-[#A65E3A] font-bold" : "text-[#8B7E6A]"
       }`}
     >
-      {hours}h {mins}m left
+      {hours}h {mins}m remaining
     </span>
   );
 }
@@ -83,19 +80,19 @@ function ListingCard({ listing }: { listing: any }) {
   return (
     <Link
       href={`/donor/listings/${listing.listingId}`}
-      className="card-hover block animate-slide-up"
+      className="card-hover block p-5 rounded-sm transition-all"
     >
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h3 className="font-semibold text-lg">
-              {foodType?.label || "Food"} — {listing.quantity} kg
+            <h3 className="font-serif-wabi font-semibold text-xl text-[#2C2620]">
+              {foodType?.label || "Food"} ({listing.quantity} kg)
             </h3>
             <StatusBadge status={listing.chainStatus} />
           </div>
           <ExpiryCountdown expiryTs={listing.expiryTs} />
         </div>
-        <div className="text-right text-xs text-surface-200/30">
+        <div className="text-right font-mono-wabi text-xs text-[#8B7E6A]">
           #{listing.listingId}
         </div>
       </div>
@@ -111,92 +108,111 @@ export default function MyListingsPage() {
     queryKey: ["listings", address],
     queryFn: () => fetchListings({ donor: address }),
     enabled: !!address,
-    refetchInterval: 30_000, // poll every 30s for live urgency
+    refetchInterval: 30_000,
   });
 
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Connect Wallet</h2>
-          <p className="text-surface-200/50 mb-6">
-            Connect to view your listings
-          </p>
-          <ConnectButton />
-        </div>
-      </div>
-    );
-  }
-
-  const listings = data?.data || [];
-
   return (
-    <div className="min-h-screen">
-      {/* Nav */}
-      <nav className="border-b border-surface-700/50 px-6 py-4">
+    <div className="min-h-screen flex flex-col bg-[#EEE9E0] text-[#4A4238] font-sans selection:bg-[#C8BFB0] selection:text-[#2C2620]">
+      {/* Navigation */}
+      <nav className="border-b border-[#C8BFB0]/50 px-6 sm:px-12 py-5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                F
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-8 h-8 bg-[#A65E3A] rounded-sm flex items-center justify-center text-[#EEE9E0] font-serif font-bold text-sm shadow-sm select-none">
+                余
               </div>
-              <span className="text-lg font-bold tracking-tight">FSE</span>
+              <span className="font-serif-wabi text-xl font-bold tracking-tight text-[#2C2620] group-hover:opacity-85 transition-opacity">
+                Food Surplus Exchange
+              </span>
             </Link>
-            <span className="text-surface-200/30 mx-2">/</span>
-            <span className="text-surface-200/60">My Listings</span>
+            <span className="text-[#8B7E6A] mx-2">/</span>
+            <span className="font-mono-wabi text-xs text-[#8B7E6A] uppercase tracking-wider">
+              My Listings
+            </span>
           </div>
           <ConnectButton />
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">My Listings</h1>
-            <p className="text-surface-200/50 mt-1">
-              Urgency scores refresh every 30 seconds
+      <main className="max-w-4xl mx-auto px-6 py-12 flex-1 w-full">
+        {!isConnected ? (
+          <div className="card text-center py-16">
+            <h2 className="font-serif-wabi text-2xl font-bold text-[#2C2620] mb-2">
+              Connect Your Wallet
+            </h2>
+            <p className="font-serif-wabi text-sm text-[#8B7E6A] mb-6">
+              Connect your web3 account to review your logged surplus inventory.
             </p>
-          </div>
-          <Link href="/donor/listings/new" className="btn-primary">
-            + New Listing
-          </Link>
-        </div>
-
-        {isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="card animate-pulse">
-                <div className="h-6 bg-surface-800 rounded w-1/3 mb-4" />
-                <div className="h-2 bg-surface-800 rounded w-full" />
-              </div>
-            ))}
-          </div>
-        ) : error ? (
-          <div className="card text-center py-12">
-            <p className="text-red-400 mb-2">Failed to load listings</p>
-            <p className="text-surface-200/50 text-sm">
-              Make sure the backend is running at{" "}
-              {process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}
-            </p>
-          </div>
-        ) : listings.length === 0 ? (
-          <div className="card flex flex-col items-center justify-center py-20 text-center">
-            <h3 className="text-xl font-bold mb-2 text-surface-200">No active listings</h3>
-            <p className="text-surface-400 mb-8 max-w-sm">
-              You haven't logged any surplus inventory yet. Add your first listing to match with local NGOs.
-            </p>
-            <Link href="/donor/listings/new" className="btn-primary">
-              Log Surplus Food
-            </Link>
+            <div className="inline-block">
+              <ConnectButton />
+            </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            {listings.map((listing: any) => (
-              <ListingCard key={listing.listingId} listing={listing} />
-            ))}
-          </div>
+          <>
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#C8BFB0]/40">
+              <div>
+                <h1 className="font-serif-wabi text-3xl sm:text-4xl font-bold text-[#2C2620]">
+                  My Listings
+                </h1>
+                <p className="font-serif-wabi text-base text-[#8B7E6A] mt-1">
+                  Urgency scores refresh automatically every 30 seconds
+                </p>
+              </div>
+              <Link href="/donor/listings/new" className="btn-primary">
+                + New Listing
+              </Link>
+            </div>
+
+            {isLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="card animate-pulse">
+                    <div className="h-6 bg-[#C8BFB0]/40 rounded w-1/3 mb-4" />
+                    <div className="h-2 bg-[#C8BFB0]/40 rounded w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="card text-center py-12">
+                <p className="font-serif-wabi text-lg text-[#A65E3A] mb-1">
+                  Unable to connect to indexer
+                </p>
+                <p className="font-mono-wabi text-xs text-[#8B7E6A]">
+                  Ensure backend service is running on port 3001
+                </p>
+              </div>
+            ) : !data?.data || data.data.length === 0 ? (
+              <div className="card flex flex-col items-center justify-center py-16 text-center">
+                <h3 className="font-serif-wabi text-2xl font-bold mb-2 text-[#2C2620]">
+                  No active listings recorded
+                </h3>
+                <p className="font-serif-wabi text-base text-[#8B7E6A] mb-6 max-w-sm">
+                  You haven&apos;t logged any surplus inventory yet. Add your first listing to match with local NGOs.
+                </p>
+                <Link href="/donor/listings/new" className="btn-primary">
+                  + Log Surplus Food
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {data.data.map((listing: any) => (
+                  <ListingCard key={listing.listingId} listing={listing} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-[#C8BFB0]/40 px-6 sm:px-12 py-5 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono-wabi text-[#8B7E6A]">
+          <div>Food Surplus Exchange | Web3 Protocol Infrastructure</div>
+          <div className="text-xs uppercase tracking-wider">
+            Decentralized Allocation & Custody Protocol
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

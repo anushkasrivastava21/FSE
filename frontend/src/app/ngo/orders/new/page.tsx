@@ -69,68 +69,73 @@ export default function NewOrderPage() {
     : null;
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <Link
-            href="/ngo/orders"
-            className="text-surface-200/60 hover:text-white transition"
-          >
-            ← My Orders
-          </Link>
-
+    <div className="min-h-screen flex flex-col bg-[#EEE9E0] text-[#4A4238] font-sans selection:bg-[#C8BFB0] selection:text-[#2C2620]">
+      {/* Navigation */}
+      <nav className="border-b border-[#C8BFB0]/50 px-6 sm:px-12 py-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-8 h-8 bg-[#A65E3A] rounded-sm flex items-center justify-center text-[#EEE9E0] font-serif font-bold text-sm shadow-sm select-none">
+                余
+              </div>
+              <span className="font-serif-wabi text-xl font-bold tracking-tight text-[#2C2620] group-hover:opacity-85 transition-opacity">
+                Food Surplus Exchange
+              </span>
+            </Link>
+            <span className="text-[#8B7E6A] mx-2">/</span>
+            <Link
+              href="/ngo/orders"
+              className="font-mono-wabi text-xs text-[#8B7E6A] uppercase tracking-wider hover:text-[#2C2620] transition-colors"
+            >
+              NGO Orders
+            </Link>
+            <span className="text-[#8B7E6A] mx-2">/</span>
+            <span className="font-mono-wabi text-xs text-[#4A4238] uppercase tracking-wider">
+              New Demand
+            </span>
+          </div>
           <ConnectButton />
         </div>
+      </nav>
 
+      <main className="max-w-2xl mx-auto px-6 py-12 flex-1 w-full">
         <div className="mb-8">
-          <div className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-2">
-            NGO Portal
+          <div className="text-[10px] font-mono-wabi text-[#A65E3A] uppercase tracking-widest mb-1">
+            NGO Portal / Demand Placement
           </div>
-
-          <h1 className="text-4xl font-extrabold tracking-tight mb-3">
-            Place a demand order
+          <h1 className="font-serif-wabi text-3xl sm:text-4xl font-bold text-[#2C2620] mb-1">
+            Place a Demand Order
           </h1>
-
-          <p className="text-surface-200/60 leading-relaxed">
-            Tell the exchange how much surplus food your NGO needs. The order
-            is submitted on-chain through your connected wallet.
+          <p className="font-serif-wabi text-base text-[#8B7E6A]">
+            Declare emergency or scheduled food relief demand for automated matching against donor surplus inventory.
           </p>
         </div>
 
         {!isConnected ? (
-          <div className="card text-center py-10">
-            <div className="text-4xl mb-4">🔐</div>
-
-            <h2 className="text-xl font-bold mb-2">
-              Connect your NGO wallet
+          <div className="card text-center py-16">
+            <h2 className="font-serif-wabi text-2xl font-bold text-[#2C2620] mb-2">
+              Connect NGO Wallet
             </h2>
-
-            <p className="text-surface-200/60 mb-6">
-              Your wallet is used as the NGO address for the demand order.
+            <p className="font-serif-wabi text-sm text-[#8B7E6A] mb-6">
+              Your connected wallet signs the on-chain demand placement transaction.
             </p>
-
-            <ConnectButton />
+            <div className="inline-block">
+              <ConnectButton />
+            </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="card space-y-6">
-            <div className="rounded-xl border border-surface-700/50 bg-surface-800/40 p-4">
-              <div className="text-xs text-surface-200/50 mb-1">
-                NGO wallet
-              </div>
-
-              <div className="font-mono text-sm break-all">
+          <form onSubmit={handleSubmit} className="card p-8 space-y-6">
+            <div className="p-4 bg-[#E4DDD1]/50 border border-[#C8BFB0]/60 rounded-sm">
+              <span className="label !mb-0.5">Authorized NGO Address</span>
+              <span className="font-mono-wabi text-xs text-[#2C2620] break-all">
                 {address}
-              </div>
+              </span>
             </div>
 
             <div>
-              <label
-                htmlFor="quantity"
-                className="block text-sm font-medium mb-2"
-              >
-                Required quantity
+              <label htmlFor="quantity" className="label">
+                Required Quantity (kg) *
               </label>
-
               <input
                 id="quantity"
                 type="number"
@@ -138,48 +143,38 @@ export default function NewOrderPage() {
                 step="1"
                 value={quantity}
                 onChange={(event) => setQuantity(event.target.value)}
-                placeholder="Example: 50"
+                placeholder="e.g. 100"
                 required
-                className="input"
+                className="input-field"
               />
-
-              <p className="text-xs text-surface-200/40 mt-2">
-                Enter the required food quantity using the contract's
-                quantity unit.
+              <p className="font-mono-wabi text-[11px] text-[#8B7E6A] mt-1.5">
+                Exact kilogram volume needed for distribution to beneficiaries
               </p>
             </div>
 
-            <div className="rounded-xl border border-surface-700/50 p-4">
+            <div className="p-4 bg-[#E4DDD1]/30 border border-[#C8BFB0] rounded-sm">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={urgencyFlag}
-                  onChange={(event) =>
-                    setUrgencyFlag(event.target.checked)
-                  }
-                  className="mt-1 h-4 w-4"
+                  onChange={(event) => setUrgencyFlag(event.target.checked)}
+                  className="mt-1 h-4 w-4 accent-[#A65E3A] rounded-sm border-[#C8BFB0]"
                 />
-
-                <span>
-                  <span className="block font-medium">
-                    Mark as urgent
+                <div>
+                  <span className="font-serif-wabi font-semibold text-base text-[#2C2620] block">
+                    Flag as High Urgency
                   </span>
-
-                  <span className="block text-sm text-surface-200/50 mt-1">
-                    Flag this demand for urgency-aware matching.
+                  <span className="font-serif-wabi text-xs text-[#8B7E6A] block mt-0.5">
+                    Prioritizes your demand in bipartite LP matching for immediate dispatch.
                   </span>
-                </span>
+                </div>
               </label>
             </div>
 
             <div>
-              <label
-                htmlFor="locationHash"
-                className="block text-sm font-medium mb-2"
-              >
-                Pickup Region / Pincode
+              <label htmlFor="locationHash" className="label">
+                Pickup Region / Pincode *
               </label>
-
               <input
                 id="locationHash"
                 type="text"
@@ -187,52 +182,45 @@ export default function NewOrderPage() {
                 onChange={(event) => setLocationHash(event.target.value)}
                 placeholder="e.g. 400001 or Mumbai Central"
                 required
-                className="input"
+                className="input-field"
               />
-
-              <p className="text-xs text-surface-200/40 mt-2">
-                This is hashed on-chain to match with nearby donors.
+              <p className="font-mono-wabi text-[11px] text-[#8B7E6A] mt-1.5">
+                Hashed to keccak256 on-chain to match with nearby donors within transport range
               </p>
             </div>
 
             {formError && (
-              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-300 text-sm break-words">
+              <div className="card border-[#A65E3A]/40 bg-[#A65E3A]/10 p-4 text-xs font-mono-wabi text-[#A65E3A] break-words">
                 {formError}
               </div>
             )}
 
             {error && !formError && (
-              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-300 text-sm break-words">
+              <div className="card border-[#A65E3A]/40 bg-[#A65E3A]/10 p-4 text-xs font-mono-wabi text-[#A65E3A] break-words">
                 {error.message}
               </div>
             )}
 
             {txHash && (
-              <div className="rounded-xl border border-brand-500/30 bg-brand-500/10 px-4 py-4">
-                <div className="font-semibold text-brand-300 mb-2">
+              <div className="card border-[#8B7E6A]/50 bg-[#E4DDD1] p-4">
+                <div className="font-serif-wabi font-semibold text-sm text-[#2C2620] mb-1">
                   {isConfirmed
-                    ? "✓ Order transaction confirmed"
+                    ? "Demand Order Confirmed on Polygon"
                     : isConfirming
-                      ? "⏳ Waiting for confirmation..."
-                      : "✓ Transaction submitted"}
+                    ? "Confirming Transaction on Blockchain..."
+                    : "Order Transaction Submitted"}
                 </div>
-
-                <div className="text-xs text-surface-200/50 mb-1">
-                  Transaction hash
-                </div>
-
-                <div className="font-mono text-xs break-all text-surface-200/80">
+                <div className="font-mono-wabi text-xs text-[#8B7E6A] break-all">
                   {txHash}
                 </div>
-
                 {transactionExplorerUrl && (
                   <a
                     href={transactionExplorerUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-block mt-3 text-sm text-brand-400 hover:text-brand-300"
+                    className="inline-block mt-2 font-mono-wabi text-xs text-[#A65E3A] hover:underline"
                   >
-                    View on PolygonScan →
+                    View on PolygonScan ↗
                   </a>
                 )}
               </div>
@@ -241,24 +229,20 @@ export default function NewOrderPage() {
             <button
               type="submit"
               disabled={isPending || isConfirming}
-              className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-3.5 text-xs font-mono-wabi tracking-wider uppercase"
             >
               {isPending
-                ? "Confirm in wallet..."
+                ? "Confirm in Wallet..."
                 : isConfirming
-                  ? "Confirming transaction..."
-                  : "Place Demand Order"}
+                ? "Submitting to Blockchain..."
+                : "+ Place Demand Order"}
             </button>
 
             {txHash && isConfirmed && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link
-                  href="/ngo/orders"
-                  className="btn-secondary flex-1 text-center"
-                >
-                  View My Orders
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <Link href="/ngo/orders" className="btn-secondary flex-1 text-center">
+                  View My Orders →
                 </Link>
-
                 <button
                   type="button"
                   onClick={() => {
@@ -269,19 +253,23 @@ export default function NewOrderPage() {
                   }}
                   className="btn-secondary flex-1"
                 >
-                  Place Another Order
+                  Place Another Request
                 </button>
               </div>
             )}
           </form>
         )}
+      </main>
 
-        <div className="mt-6 text-xs text-surface-200/40 leading-relaxed">
-          The browser requests an unsigned transaction from the FSE backend.
-          Your connected wallet signs the transaction; the backend never
-          receives your private key.
+      {/* Footer */}
+      <footer className="border-t border-[#C8BFB0]/40 px-6 sm:px-12 py-5 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono-wabi text-[#8B7E6A]">
+          <div>Food Surplus Exchange | Web3 Protocol Infrastructure</div>
+          <div className="text-xs uppercase tracking-wider">
+            Decentralized Allocation & Custody Protocol
+          </div>
         </div>
-      </div>
-    </main>
+      </footer>
+    </div>
   );
 }

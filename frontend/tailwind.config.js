@@ -32,10 +32,21 @@ module.exports = {
           900: "#171717",
           950: "#0a0a0a",
         },
+        wabi: {
+          paper: "#EEE9E0",
+          sand: "#E4DDD1",
+          clayLight: "#C8BFB0",
+          clayMid: "#8B7E6A",
+          sumi: "#4A4238",
+          charcoal: "#2C2620",
+          rust: "#A65E3A",
+          rustLight: "#C47952",
+        },
       },
       fontFamily: {
         sans: ["system-ui", "-apple-system", "sans-serif"],
-        mono: ["ui-monospace", "monospace"],
+        serif: ["Cormorant Garamond", "Shippori Mincho", "Noto Serif JP", "Georgia", "serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",

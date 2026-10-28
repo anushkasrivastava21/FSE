@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Param,
   Query,
   NotFoundException,
@@ -12,6 +13,12 @@ import { MatchingService } from "./matching.service";
 @Controller("matches")
 export class MatchingController {
   constructor(private readonly matchingService: MatchingService) {}
+
+  @Post("execute")
+  @ApiOperation({ summary: "Trigger matching engine execution immediately on-chain" })
+  async executeMatch() {
+    return this.matchingService.executeMatch();
+  }
 
   @Get()
   @ApiOperation({ summary: "List recent matches" })

@@ -9,7 +9,7 @@ contract Order is AccessControl, IOrder {
     bytes32 public constant MATCHING_ENGINE_ROLE =
         keccak256("MATCHING_ENGINE_ROLE");
 
-    uint256 private _nextOrderId = 1;
+    uint256 public nextOrderId = 1;
 
     mapping(uint256 => OrderData) private _orders;
 
@@ -67,7 +67,7 @@ contract Order is AccessControl, IOrder {
             "quantity must be greater than zero"
         );
 
-        orderId = _nextOrderId++;
+        orderId = nextOrderId++;
 
         _orders[orderId] = OrderData({
             ngoAddress: msg.sender,

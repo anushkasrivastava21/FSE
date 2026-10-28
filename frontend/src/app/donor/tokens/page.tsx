@@ -41,9 +41,7 @@ export default function DonorTokensPage() {
     setError("");
 
     try {
-      const response: TokenResponse =
-        await fetchTokensByDonor(address);
-
+      const response: TokenResponse = await fetchTokensByDonor(address);
       setTokens(response.data);
       setTotal(response.total);
     } catch (err) {
@@ -62,163 +60,155 @@ export default function DonorTokensPage() {
   }, [loadTokens]);
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <Link
-            href="/"
-            className="text-surface-200/60 hover:text-white transition"
-          >
-            ← Home
-          </Link>
-
+    <div className="min-h-screen flex flex-col bg-[#EEE9E0] text-[#4A4238] font-sans selection:bg-[#C8BFB0] selection:text-[#2C2620]">
+      {/* Navigation */}
+      <nav className="border-b border-[#C8BFB0]/50 px-6 sm:px-12 py-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-8 h-8 bg-[#A65E3A] rounded-sm flex items-center justify-center text-[#EEE9E0] font-serif font-bold text-sm shadow-sm select-none">
+                余
+              </div>
+              <span className="font-serif-wabi text-xl font-bold tracking-tight text-[#2C2620] group-hover:opacity-85 transition-opacity">
+                Food Surplus Exchange
+              </span>
+            </Link>
+            <span className="text-[#8B7E6A] mx-2">/</span>
+            <span className="font-mono-wabi text-xs text-[#8B7E6A] uppercase tracking-wider">
+              Food Credit Tokens
+            </span>
+          </div>
           <ConnectButton />
         </div>
+      </nav>
 
-        <div className="mb-8">
-          <div className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-2">
-            Donor Portal
+      <main className="max-w-4xl mx-auto px-6 py-12 flex-1 w-full">
+        <div className="mb-8 pb-4 border-b border-[#C8BFB0]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="text-[10px] font-mono-wabi text-[#A65E3A] uppercase tracking-widest mb-1">
+              Soulbound Impact Credits
+            </div>
+            <h1 className="font-serif-wabi text-3xl sm:text-4xl font-bold text-[#2C2620]">
+              Food Credit Token Ledger
+            </h1>
+            <p className="font-serif-wabi text-base text-[#8B7E6A] mt-1">
+              Immutable on-chain verification of surplus food diverted to certified shelter kitchens.
+            </p>
           </div>
-
-          <h1 className="text-4xl font-extrabold tracking-tight mb-3">
-            Food Credit Token History
-          </h1>
-
-          <p className="text-surface-200/60 leading-relaxed">
-            View the Food Credit Tokens minted for your completed food
-            donations.
-          </p>
+          {isConnected && (
+            <button
+              type="button"
+              onClick={loadTokens}
+              disabled={loading}
+              className="btn-secondary self-start sm:self-auto"
+            >
+              {loading ? "Refreshing..." : "Refresh Ledger"}
+            </button>
+          )}
         </div>
 
         {!isConnected ? (
-          <div className="card text-center py-12">
-            <div className="text-4xl mb-4">🔐</div>
-
-            <h2 className="text-xl font-bold mb-2">
-              Connect your donor wallet
+          <div className="card text-center py-16">
+            <h2 className="font-serif-wabi text-2xl font-bold text-[#2C2620] mb-2">
+              Connect Donor Wallet
             </h2>
-
-            <p className="text-surface-200/60 mb-6">
-              Connect the wallet that receives Food Credit Tokens.
+            <p className="font-serif-wabi text-sm text-[#8B7E6A] mb-6">
+              Connect the wallet address holding your minted Food Credit Tokens.
             </p>
-
-            <ConnectButton />
+            <div className="inline-block">
+              <ConnectButton />
+            </div>
           </div>
         ) : (
           <>
-            <div className="rounded-xl border border-surface-700/50 bg-surface-800/30 px-4 py-3 mb-6">
-              <div className="text-xs text-surface-200/40 mb-1">
-                Donor wallet
+            <div className="card p-4 mb-6 bg-[#E4DDD1]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="label !mb-0.5">Connected Donor Wallet</span>
+                <span className="font-mono-wabi text-xs text-[#2C2620] break-all">
+                  {address}
+                </span>
               </div>
-
-              <div className="font-mono text-sm break-all">
-                {address}
+              <div className="text-right">
+                <span className="font-mono-wabi text-xs font-semibold text-[#A65E3A]">
+                  {total} {total === 1 ? "credit" : "credits"} minted
+                </span>
               </div>
             </div>
 
             {error && (
-              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 mb-6 text-red-300 text-sm">
+              <div className="card border-[#A65E3A]/40 bg-[#A65E3A]/10 p-4 mb-6 text-xs font-mono-wabi text-[#A65E3A]">
                 {error}
               </div>
             )}
 
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm text-surface-200/50">
-                {total} {total === 1 ? "token" : "tokens"} minted
-              </div>
-
-              <button
-                type="button"
-                onClick={loadTokens}
-                disabled={loading}
-                className="btn-secondary text-sm"
-              >
-                {loading ? "Refreshing..." : "Refresh"}
-              </button>
-            </div>
-
             {loading && tokens.length === 0 ? (
-              <div className="card text-center py-12 text-surface-200/50">
-                Loading Food Credit Token history...
+              <div className="card text-center py-12 animate-pulse">
+                <p className="font-serif-wabi text-base text-[#8B7E6A]">
+                  Reading Food Credit Token ledger from blockchain...
+                </p>
               </div>
             ) : tokens.length === 0 ? (
-              <div className="card text-center py-12">
-                <div className="text-4xl mb-4">🏅</div>
-
-                <h2 className="text-xl font-bold mb-2">
-                  No Food Credit Tokens yet
+              <div className="card text-center py-16">
+                <h2 className="font-serif-wabi text-2xl font-bold text-[#2C2620] mb-2">
+                  No Food Credit Tokens Minted
                 </h2>
-
-                <p className="text-surface-200/50 max-w-lg mx-auto">
-                  Tokens appear here after a matched donation reaches the
-                  Delivered stage and Settlement confirms the delivery.
+                <p className="font-serif-wabi text-base text-[#8B7E6A] max-w-md mx-auto">
+                  Tokens are automatically minted by the Settlement contract once a donation reaches the Delivered custody state.
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {tokens.map((token) => (
-                  <div
-                    key={token.tokenId}
-                    className="card"
-                  >
+                  <div key={token.tokenId} className="card p-6">
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-3 mb-4">
-                          <span className="text-xl font-bold">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="font-serif-wabi text-2xl font-bold text-[#2C2620]">
                             Food Credit #{token.tokenId}
                           </span>
-
-                          <span className="inline-flex items-center rounded-full border border-brand-500/20 bg-brand-500/10 px-3 py-1 text-xs font-medium text-brand-300">
-                            Minted
-                          </span>
+                          <span className="badge-settled">Minted</span>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono-wabi">
                           <div>
-                            <div className="text-xs text-surface-200/40 mb-1">
-                              Match ID
+                            <div className="text-[#8B7E6A] uppercase tracking-wider mb-1">
+                              Match Protocol Hash
                             </div>
-
-                            <div className="font-mono text-xs break-all">
+                            <div className="text-[#2C2620] break-all font-mono">
                               {token.matchId}
                             </div>
                           </div>
 
                           <div>
-                            <div className="text-xs text-surface-200/40 mb-1">
-                              Minted
+                            <div className="text-[#8B7E6A] uppercase tracking-wider mb-1">
+                              Mint Timestamp
                             </div>
-
-                            <div>
-                              {new Date(
-                                Number(token.mintedAt) * 1000,
-                              ).toLocaleString()}
+                            <div className="text-[#2C2620]">
+                              {new Date(Number(token.mintedAt) * 1000).toLocaleString()}
                             </div>
                           </div>
 
                           <div>
-                            <div className="text-xs text-surface-200/40 mb-1">
-                              Metadata URI
+                            <div className="text-[#8B7E6A] uppercase tracking-wider mb-1">
+                              Metadata IPFS CID
                             </div>
-
-                            <div className="break-all text-surface-200/70">
-                              {token.metadataUri || "—"}
+                            <div className="text-[#2C2620] break-all">
+                              {token.metadataUri || "N/A"}
                             </div>
                           </div>
 
                           <div>
-                            <div className="text-xs text-surface-200/40 mb-1">
-                              Token ID
+                            <div className="text-[#8B7E6A] uppercase tracking-wider mb-1">
+                              Token Identifier
                             </div>
-
-                            <div className="font-mono">
-                              {token.tokenId}
+                            <div className="text-[#2C2620] font-semibold">
+                              #{token.tokenId}
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-3 lg:min-w-48">
+                      <div className="flex flex-col gap-2.5 sm:min-w-44">
                         {token.txHash && (
                           <a
                             href={`https://amoy.polygonscan.com/tx/${token.txHash}`}
@@ -226,17 +216,17 @@ export default function DonorTokensPage() {
                             rel="noreferrer"
                             className="btn-secondary text-center"
                           >
-                            View Mint Transaction →
+                            <span>Polygonscan</span>
+                            <span className="text-[#A65E3A]">↗</span>
                           </a>
                         )}
 
                         <Link
-                          href={`/handoffs/${encodeURIComponent(
-                            token.matchId,
-                          )}`}
+                          href={`/handoffs/${encodeURIComponent(token.matchId)}`}
                           className="btn-secondary text-center"
                         >
-                          View Custody Trail →
+                          <span>Custody Trail</span>
+                          <span>→</span>
                         </Link>
                       </div>
                     </div>
@@ -246,13 +236,17 @@ export default function DonorTokensPage() {
             )}
           </>
         )}
+      </main>
 
-        <div className="mt-8 text-xs text-surface-200/40 leading-relaxed">
-          Food Credit Tokens are minted by Settlement when a matched
-          donation reaches Delivered. This page reads the indexed mint
-          history for the connected donor wallet.
+      {/* Footer */}
+      <footer className="border-t border-[#C8BFB0]/40 px-6 sm:px-12 py-5 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono-wabi text-[#8B7E6A]">
+          <div>Food Surplus Exchange | Web3 Protocol Infrastructure</div>
+          <div className="text-xs uppercase tracking-wider">
+            Decentralized Allocation & Custody Protocol
+          </div>
         </div>
-      </div>
-    </main>
+      </footer>
+    </div>
   );
 }
