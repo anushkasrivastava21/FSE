@@ -74,9 +74,13 @@ export class MatchingService {
       transport: http(rpcUrl),
     });
 
+    // Use Hardhat pre-funded Account 0 on local network, or configured private key on testnets
     let rawKey =
-      this.config.get<string>("PRIVATE_KEY") ||
-      "562f8e93b85f40184907d14d561d6dc6710d2f032bd0f045a8aa98da296f621f";
+      chain.id === 31337
+        ? "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        : this.config.get<string>("PRIVATE_KEY") ||
+          "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+
     if (!rawKey.startsWith("0x")) {
       rawKey = `0x${rawKey}`;
     }
@@ -127,7 +131,7 @@ export class MatchingService {
     }
 
     // 3. Collect Open orders
-    const openOrders: { id: bigint; locationHash: string }[] = [];
+    const openOrders: { id: bigint; locationHash: string; urgencyFlag: boolean }[] = [];
     for (let j = 1n; j < nextOrderId; j++) {
       try {
         const o = (await publicClient.readContract({
@@ -137,7 +141,11 @@ export class MatchingService {
           args: [j],
         })) as any;
         if (Number(o.status) === 0) {
-          openOrders.push({ id: j, locationHash: o.locationHash });
+          openOrders.push({
+            id: j,
+            locationHash: o.locationHash,
+            urgencyFlag: Boolean(o.urgencyFlag),
+          });
         }
       } catch (err) {
         // continue
@@ -169,7 +177,7 @@ export class MatchingService {
       const order = openOrders.find(
         (o) =>
           !usedOrders.has(o.id.toString()) &&
-          o.locationHash === listing.locationHash,
+          o.locationHash.toLowerCase() === listing.locationHash.toLowerCase(),
       );
 
       if (order) {
@@ -177,15 +185,15 @@ export class MatchingService {
         matchedListings.push(listing.id);
         matchedOrders.push(order.id);
 
-        const weight = (await publicClient.readContract({
+        const urgency = (await publicClient.readContract({
           address: this.contracts.matchingEngineAddress,
           abi: this.contracts.matchingEngineAbi,
           functionName: "computeUrgency",
           args: [listing.id],
         })) as bigint;
 
-        weights.push(weight);
-        dualV.push(0n);
+        weights.push(urgency);
+        dualV.push(order.urgencyFlag ? 1000000n : 0n);
       }
     }
 
@@ -197,41 +205,58 @@ export class MatchingService {
       };
     }
 
-    // 5. Submit transaction to MatchingEngine.matchOrders
+    // 5. Submit transactions to MatchingEngine.matchOrders
     this.logger.log(
       `Executing match for ${matchedListings.length} pair(s) on-chain...`,
     );
 
-    try {
-      const txHash = await (walletClient as any).writeContract({
-        address: this.contracts.matchingEngineAddress,
-        abi: this.contracts.matchingEngineAbi,
-        functionName: "matchOrders",
-        args: [matchedListings, matchedOrders, weights, dualV],
-      });
+    const executedTxHashes: string[] = [];
+    const successfulPairs: { listingId: string; orderId: string; weight: string }[] = [];
 
-      await publicClient.waitForTransactionReceipt({ hash: txHash });
+    for (let i = 0; i < matchedListings.length; i++) {
+      const lId = matchedListings[i];
+      const oId = matchedOrders[i];
+      const uVal = weights[i];
+      const vVal = dualV[i];
 
-      this.logger.log(`Match transaction confirmed: ${txHash}`);
+      try {
+        const txHash = await (walletClient as any).writeContract({
+          address: this.contracts.matchingEngineAddress,
+          abi: this.contracts.matchingEngineAbi,
+          functionName: "matchOrders",
+          args: [[lId], [oId], [uVal], [vVal]],
+        });
 
-      return {
-        success: true,
-        message: `Executed match for ${matchedListings.length} pair(s) successfully!`,
-        txHash,
-        matchedCount: matchedListings.length,
-        pairs: matchedListings.map((lId, idx) => ({
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        this.logger.log(`Match executed for listing #${lId} -> order #${oId}: tx ${txHash}`);
+        executedTxHashes.push(txHash);
+        successfulPairs.push({
           listingId: lId.toString(),
-          orderId: matchedOrders[idx].toString(),
-          weight: weights[idx].toString(),
-        })),
-      };
-    } catch (err: any) {
-      this.logger.error(`Match execution failed: ${err.message}`);
+          orderId: oId.toString(),
+          weight: (uVal + vVal).toString(),
+        });
+      } catch (err: any) {
+        this.logger.error(
+          `Failed matching listing #${lId} -> order #${oId}: ${err.message}`,
+        );
+      }
+    }
+
+    if (successfulPairs.length === 0) {
       return {
         success: false,
-        message: `Match execution failed: ${err.shortMessage || err.message}`,
+        message: "Failed to execute on-chain matching for discovered pairs.",
       };
     }
+
+    return {
+      success: true,
+      message: `Executed match for ${successfulPairs.length} pair(s) successfully!`,
+      txHash: executedTxHashes[0],
+      txHashes: executedTxHashes,
+      matchedCount: successfulPairs.length,
+      pairs: successfulPairs,
+    };
   }
 
   private serializeMatch(match: any) {

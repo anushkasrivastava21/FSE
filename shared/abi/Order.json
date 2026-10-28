@@ -165,6 +165,19 @@
   },
   {
     "inputs": [],
+    "name": "MATCHING_ENGINE_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "NGO_ROLE",
     "outputs": [
       {
@@ -187,6 +200,57 @@
     "name": "cancelOrder",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrder",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "ngoAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "quantity",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "urgencyFlag",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "locationHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "enum IOrder.Status",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IOrder.OrderData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -251,39 +315,13 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "nextOrderId",
+    "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "name": "orders",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "ngoAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "quantity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "urgencyFlag",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "locationHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "enum Order.Status",
-        "name": "status",
-        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -353,6 +391,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "matchingEngine",
+        "type": "address"
+      }
+    ],
+    "name": "revokeMatchingEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "ngo",
         "type": "address"
       }
@@ -383,6 +434,19 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "matchingEngine",
+        "type": "address"
+      }
+    ],
+    "name": "setMatchingEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"
@@ -400,16 +464,21 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "nextOrderId",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "orderId",
         "type": "uint256"
+      },
+      {
+        "internalType": "enum IOrder.Status",
+        "name": "newStatus",
+        "type": "uint8"
       }
     ],
-    "stateMutability": "view",
+    "name": "updateStatus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
