@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, usePublicClient, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { fetchHandoffsByMatchId, prepareRecordHandoffTx } from "../../../lib/api";
 
 type Handoff = {
@@ -62,6 +62,7 @@ export default function HandoffDetailPage({
   const [error, setError] = useState("");
 
   const { address } = useAccount();
+  const publicClient = usePublicClient();
   const { sendTransactionAsync, data: txHash, isPending } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
@@ -71,7 +72,7 @@ export default function HandoffDetailPage({
 
     try {
       const response: HandoffResponse = await fetchHandoffsByMatchId(matchId);
-      setHandoffs(response.data);
+      setHandoffs(response.data || []);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to load custody trail.",
@@ -91,21 +92,44 @@ export default function HandoffDetailPage({
     }
   }, [isSuccess, loadHandoffs]);
 
-  const delivered = handoffs.some((handoff) => handoff.stage === 2);
-  const nextStage = handoffs.length;
+  // Deduplicate and sort handoffs by stage
+  const uniqueHandoffs = Array.from(
+    new Map(handoffs.map((h) => [h.stage, h])).values(),
+  ).sort((a, b) => a.stage - b.stage);
+
+  const highestRecordedStage =
+    uniqueHandoffs.length > 0
+      ? Math.max(...uniqueHandoffs.map((h) => h.stage))
+      : -1;
+
+  const nextStage = highestRecordedStage + 1;
+  const delivered = uniqueHandoffs.some((handoff) => handoff.stage === 2);
 
   async function handleRecordStage() {
     if (!address || nextStage > 2) return;
+    setError("");
     try {
       const tx = await prepareRecordHandoffTx({
         matchId,
         stage: nextStage,
         actor: address,
       });
-      await sendTransactionAsync({ to: tx.to, data: tx.data });
-    } catch (err) {
+
+      const nonce =
+        publicClient && address
+          ? await publicClient.getTransactionCount({ address })
+          : undefined;
+
+      await sendTransactionAsync({
+        to: tx.to as `0x${string}`,
+        data: tx.data as `0x${string}`,
+        ...(nonce !== undefined ? { nonce } : {}),
+      });
+    } catch (err: any) {
       console.error(err);
-      alert(err instanceof Error ? err.message : "Failed to record handoff");
+      setError(
+        err?.shortMessage || err?.message || "Failed to record handoff.",
+      );
     }
   }
 
@@ -187,7 +211,7 @@ export default function HandoffDetailPage({
               </button>
             )}
 
-            {handoffs.length === 0 ? (
+            {uniqueHandoffs.length === 0 ? (
               <div className="card text-center py-16 mb-8">
                 <h2 className="font-serif-wabi text-2xl font-bold text-[#2C2620] mb-2">
                   No Handoff Events Recorded
@@ -202,7 +226,7 @@ export default function HandoffDetailPage({
                   <div>
                     <span className="label !mb-0.5">Custody Progression</span>
                     <span className="font-serif-wabi text-2xl font-bold text-[#2C2620]">
-                      {delivered ? "Fully Delivered & Settled" : `${handoffs.length} of 3 Stages Completed`}
+                      {delivered ? "Fully Delivered & Settled" : `${uniqueHandoffs.length} of 3 Stages Completed`}
                     </span>
                   </div>
                   <span className={delivered ? "badge-settled" : "badge-matched"}>
@@ -212,7 +236,7 @@ export default function HandoffDetailPage({
 
                 <div className="space-y-4">
                   {STAGES.map((stage) => {
-                    const recorded = handoffs.find(
+                    const recorded = uniqueHandoffs.find(
                       (handoff) => handoff.stage === stage.value,
                     );
 

@@ -62,15 +62,24 @@ export class HandoffIndexer implements OnModuleInit {
       );
 
       try {
-        await this.prisma.handoffsCache.create({
-          data: {
+        const existing = await this.prisma.handoffsCache.findFirst({
+          where: {
             matchId,
             stage: Number(stage),
-            actor,
-            timestamp: BigInt(timestamp),
-            txHash: log.transactionHash ?? "",
           },
         });
+
+        if (!existing) {
+          await this.prisma.handoffsCache.create({
+            data: {
+              matchId,
+              stage: Number(stage),
+              actor,
+              timestamp: BigInt(timestamp),
+              txHash: log.transactionHash ?? "",
+            },
+          });
+        }
       } catch (error) {
         this.logger.error(
           `Failed to index HandoffRecorded ${matchId}`,
