@@ -3,12 +3,13 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, usePublicClient, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { keccak256, toBytes } from "viem";
 import { preparePlaceOrderTx } from "../../../../lib/api";
 
 export default function NewOrderPage() {
   const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient();
 
   const { sendTransactionAsync, data: txHash, isPending, error } =
     useSendTransaction();
@@ -52,9 +53,15 @@ export default function NewOrderPage() {
         locationHash: hashedLocation,
       });
 
+      const nonce =
+        publicClient && address
+          ? await publicClient.getTransactionCount({ address })
+          : undefined;
+
       await sendTransactionAsync({
         to: tx.to,
         data: tx.data,
+        ...(nonce !== undefined ? { nonce } : {}),
       });
     } catch (err) {
       const message =

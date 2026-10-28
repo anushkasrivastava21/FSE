@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAccount,
+  usePublicClient,
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from "wagmi";
@@ -24,6 +25,17 @@ type Order = {
   createdAt: string;
 };
 
+function formatTimestamp(value: string | number) {
+  if (!value) return "Just now";
+  const num = Number(value);
+  if (!isNaN(num) && num > 0) {
+    const ms = num < 1e11 ? num * 1000 : num;
+    return new Date(ms).toLocaleString();
+  }
+  const date = new Date(value);
+  return isNaN(date.getTime()) ? "Just now" : date.toLocaleString();
+}
+
 type OrdersResponse = {
   data: Order[];
   total: number;
@@ -33,6 +45,7 @@ type OrdersResponse = {
 
 export default function NgoOrdersPage() {
   const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState(0);
@@ -105,9 +118,15 @@ export default function NgoOrdersPage() {
 
     try {
       const tx = await prepareCancelOrderTx(orderId);
+      const nonce =
+        publicClient && address
+          ? await publicClient.getTransactionCount({ address })
+          : undefined;
+
       await sendTransactionAsync({
         to: tx.to as `0x${string}`,
         data: tx.data as `0x${string}`,
+        ...(nonce !== undefined ? { nonce } : {}),
       });
     } catch (error) {
       setCancelError(
@@ -213,8 +232,13 @@ export default function NgoOrdersPage() {
             )}
 
             {cancelError && (
-              <div className="card border-[#A65E3A]/40 bg-[#A65E3A]/10 p-4 mb-6 text-xs font-mono-wabi text-[#A65E3A] break-words">
-                {cancelError}
+              <div className="card border-[#A65E3A]/40 bg-[#A65E3A]/10 p-4 mb-6 text-xs font-mono-wabi text-[#A65E3A] break-words space-y-2">
+                <div>{cancelError}</div>
+                {cancelError.toLowerCase().includes("nonce") && (
+                  <div className="pt-2 border-t border-[#A65E3A]/20 text-[11px] text-[#4A4238]">
+                    <span className="font-bold text-[#A65E3A]">MetaMask Nonce Desync:</span> Open MetaMask → Settings → Advanced → click <em>Clear activity tab data</em> to synchronize with the local blockchain.
+                  </div>
+                )}
               </div>
             )}
 
@@ -290,7 +314,7 @@ export default function NgoOrdersPage() {
                                 Placed Timestamp
                               </div>
                               <div className="text-[#2C2620]">
-                                {new Date(order.createdAt).toLocaleString()}
+                                {formatTimestamp(order.createdAt)}
                               </div>
                             </div>
 
